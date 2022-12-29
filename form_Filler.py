@@ -26,6 +26,7 @@ class date_input():
         )
     
     def formInput(self):
+        pyautogui.PAUSE = 0.02
         pyautogui.moveTo(self.coordinates_first_field)
         pyautogui.click()
         time.sleep(0.05)
@@ -33,16 +34,13 @@ class date_input():
             print("Writing form '%s'..." %(k))
             with pyautogui.hold('ctrl'):
                 pyautogui.press('a')
-            time.sleep(0.05)
             pyautogui.press('backspace')
-            time.sleep(0.05)
             pyautogui.write(v)
-            pyautogui.sleep(0.05)
             pyautogui.press('tab')
-            pyautogui.sleep(0.05)
+            time.sleep(0.1)
             print("Finished writing form '%s'" %(k))
-        print("Checkmarking finalize box")
         pyautogui.click(self.coordinates_finalize_box)
+        print("Checkmarked finalize box")
         print("Finished with all inputs.")
         
 
