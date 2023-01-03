@@ -6,13 +6,13 @@ from dataclasses import dataclass
 class dateInput():
     def __init__(self, userInput) -> None:
         self.dayToChange = userInput
-        # self.coordinates_first_field = (2380,765) #DEBUG
-        # self.coordinates_finalize_box = (2780,865) #DEBUG
+        # self.coordinates_first_field = (2380,765) #DEBUG self machine
+        # self.coordinates_finalize_box = (2780,865) #DEBUG self machine
         self.coordinates_first_field = (541,718) #DEBUG
         self.coordinates_finalize_box = (1057,811) #DEBUG
         self.dictInputs = {
-            'Day After Date': self.dateDayAfter(),
             'Time In':"08:00 PM",
+            'Day After Date': self.dateDayAfter(),
             'Time Out':"04:30 AM",
             'Lunch Time In':'12:00 AM',
             'Lunch Time Out':'12:30 AM',
@@ -27,7 +27,7 @@ class dateInput():
         )
     
     def formInput(self):
-        pyautogui.PAUSE = 0.05
+        pyautogui.PAUSE = 0.1
         pyautogui.moveTo(self.coordinates_first_field[0], self.coordinates_first_field[1])
         pyautogui.click()
         time.sleep(0.1)
@@ -110,23 +110,24 @@ class dateInput():
             datetime.strftime(dtObject_Day_To_Be_Changed, '%m/%d/%Y')
         )
 
-prev_data = None
-firstAttempt = True
-quickMode = True
-while True:
-    if firstAttempt == True:
-        userInput = dateInput.userInput()
-        firstAttempt = False
-    elif quickMode == True:
-        print("Quick Mode is ON.")
-        userInput = dateInputObj.userInputSecond()
-    else:
-        userInput = dateInput.userInput()
-    dateInputObj = dateInput(userInput)
-    dateInputObj.formInput()
-    prev_data = userInput
-    print("Starting another loop")
-    with pyautogui.hold('alt'):
-            pyautogui.press('tab')
 
+def run():
+    prev_data = None
+    firstAttempt = True
+    quickMode = True
+    while True:
+        if firstAttempt == True:
+            userInput = dateInput.userInput()
+            firstAttempt = False
+        elif quickMode == True:
+            print("Quick Mode is ON.")
+            userInput = dateInputObj.userInputSecond()
+        else:
+            userInput = dateInput.userInput()
+        dateInputObj = dateInput(userInput)
+        dateInputObj.formInput()
+        prev_data = userInput
+        print("Starting another loop")
+
+run()
 # mouseinfo.mouseInfo()
