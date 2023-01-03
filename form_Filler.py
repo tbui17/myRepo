@@ -8,8 +8,8 @@ class dateInput():
         self.dayToChange = userInput
         # self.coordinates_first_field = (2380,765) #DEBUG self machine
         # self.coordinates_finalize_box = (2780,865) #DEBUG self machine
-        self.coordinates_first_field = (541,718) #DEBUG
-        self.coordinates_finalize_box = (1057,811) #DEBUG
+        self.coordinates_first_field = (541,776) #DEBUG
+        self.coordinates_finalize_box = (1055,870) #DEBUG
         self.dictInputs = {
             'Time In':"08:00 PM",
             'Day After Date': self.dateDayAfter(),
@@ -55,6 +55,7 @@ class dateInput():
             
             
             print("Finished writing form '%s'" %(k))
+        time.sleep(0.5)
         pyautogui.click(self.coordinates_finalize_box[0], self.coordinates_finalize_box[1])
         print("Checkmarked finalize box")
         print("Finished with all inputs.")
