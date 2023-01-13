@@ -130,5 +130,5 @@ def run():
         prev_data = userInput
         print("Starting another loop")
 
-run()
-# mouseinfo.mouseInfo()
+# run()
+mouseinfo.mouseInfo()
