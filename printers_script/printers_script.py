@@ -34,9 +34,9 @@ Assignment_Group = 'Baltimore Support'
 # Coords_Submit = (1785,429)
 
 #Locate On Screen Inputs
-Create_New = "Create_New"
-save = "save"
-printers2 = "printers2"
+Submit = 1
+Printers_Applied = 2
+Create_Security_Incident = 3
 
 #Pictures Paths
 Pic_Printers_Applied =  #Printers2 template applied. Checks if page has fully loaded after using the template.
@@ -64,11 +64,11 @@ def locate_on_screen(data):
     count = 0
     while True:
         print(f"Beginning locateOnScreen for {data}...")
-        if data is "Create_New":
+        if data is Submit:
             res1 = pa.locateOnScreen(Pic_Submit, region=create_new_region, confidence=0.9)
-        elif data is "printers2":
+        elif data is Printers_Applied:
             res1 = pa.locateOnScreen(Pic_Printers_Applied, region=printers2_region, confidence=0.9)
-        elif data is "save":
+        elif data is Create_Security_Incident:
             res1 = pa.locateOnScreen(Pic_Create_Security_Incident, region=save_region, confidence=0.9)
         else:
             raise Exception("Invalid data provided for locateOnScreen")
@@ -105,7 +105,7 @@ def script1(data):
     print(f"Clicked create new, now sleeping for {sleep1} seconds...")
     time.sleep((sleep1))
     print("Checking if process has finished.")
-    locate_on_screen(Create_New)
+    locate_on_screen(Submit)
     print("Process finished.")
     
     #Use template
@@ -114,7 +114,7 @@ def script1(data):
     print(f"Clicked printer template, now sleeping for {sleep2} seconds...")
     time.sleep(sleep2)
     print("Checking if process has finished.")
-    locate_on_screen(printers2)
+    locate_on_screen(Printers_Applied)
     print("Process finished.")
     
     #Add printer to beginning of short description
@@ -139,7 +139,7 @@ def script1(data):
     print(f"Clicked save, now sleeping for {sleep3} seconds...")
     time.sleep(sleep3)
     print("Checking if process has finished.")
-    locate_on_screen(printers2)
+    locate_on_screen(Create_Security_Incident)
     print("Process finished.")
     
 
