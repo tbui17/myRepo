@@ -27,7 +27,7 @@ async function sayHello() {
   console.log("hello2")
 }
 
-function retry(fn, delay=3000, retries=3, err=null) {
+function retry(fn, delay=200, retries=5, err=null) {
   if (!retries) {
     console.log(`(Retry Function) Failed. Out of tries.`)
     return Promise.reject(err);
@@ -37,8 +37,20 @@ function retry(fn, delay=3000, retries=3, err=null) {
       console.log('(Retry Function) Rejected. Retrying if there are tries remaining.')
       if (delay != 0) {
         if (retries == 1) {
-          delay += 5000
-          console.log('Last try, sleeping for 5000 ms longer.');
+          delay += 2000
+          console.log('Last try, sleeping for 5000 ms longer than initial delay');
+        }
+        if (retries == 2) {
+          delay += 2000
+          console.log('Last try, sleeping for 3000 ms longer than initial delay');
+        }
+        if (retries == 3) {
+          delay += 500
+          console.log('3rd try, sleeping for 1000 ms longer than initial delay');
+        }
+        if (retries == 4) {
+          delay += 500
+          console.log('2nd try, sleeping for 500 ms longer than initial delay');
         }
         console.log(`Sleeping for ${delay} ms...`);
         await sleep(delay)
@@ -55,8 +67,6 @@ async function getElement() {
   }
 }
 
-let funct12 = ()=>document.querySelector("#main > div:nth-child(3) > a.w3-left.w3-btn")
-
 async function errorCheck(funct){
 
   try {
@@ -69,10 +79,12 @@ async function errorCheck(funct){
   }
 }
 
-function wrapRetryErrorCheck(funct) {
-  retry(()=>errorCheck(funct))
+async function wrapRetryErrorCheck(funct) {
+  await retry(()=>errorCheck(funct))
 }
 
+let funct12 = ()=>document.querySelector("#main > div:nth-child(3) > a.w3-left.w3-btn")
+wrapRetryErrorCheck(funct12)
 
 // function waitForElm(selector) {
 //   return new Promise(resolve => {
