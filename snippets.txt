@@ -51,11 +51,11 @@
       "}"
     ]
   },
-  "mmSelectEle": {
-    "prefix": "mmSelectEle",
+  "mmFunctSelectEle": {
+    "prefix": "mmFunctSelectEle",
     "description": "",
     "body": [
-      "let $1 = ()=>$2"
+      "let Funct_Select_$1 = ()=>$2"
     ]
   }
 }

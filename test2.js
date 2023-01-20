@@ -78,7 +78,6 @@ retry(()=>getElement(`#nav-users > div > div`))
 //   });
 // }
 
-
 function waitForElement(querySelector, timeout){
   return new Promise((resolve, reject)=>{
     var timer = false;
@@ -113,3 +112,50 @@ waitForElement(`#nav-companies > div > div`, 3000).then(function(){
 });
 }
 main()
+
+
+
+function returnOne() {
+  let var1 = 1+1
+  return var1
+}
+
+function isThisOne(funct1) {
+  if (funct1() == 1) {
+    console.log('This is one')
+  } else if (funct1() == 2) {
+    console.log('This is two')
+  } else {console.log('this is not one or two')}
+}
+
+isThisOne(returnOne)
+
+
+let getEleHeader = ()=>document.querySelector("#main > div:nth-child(5) > h3")
+
+function waitForElement1(select_func, timeout=3000){
+  return new Promise((resolve, reject)=>{
+    var timer = false;
+    console.log(select_func())
+    if(select_func()) return resolve();
+    const observer = new MutationObserver(()=>{
+      if(select_func()){
+        observer.disconnect();
+        if(timer !== false) clearTimeout(timer);
+        return resolve();
+      }
+    });
+    observer.observe(document.body, {//document.body may not work with shadow DOMs, may have to 
+      childList: true, 
+      subtree: true
+    });
+    if(timeout) timer = setTimeout(()=>{
+      observer.disconnect();
+      reject();
+    }, timeout);
+  });
+}
+
+let Funct_Select_AcceptButton = ()=>document.querySelector("#main > div:nth-child(3) > a.w3-left.w3-btn")
+
+waitForElement1(Funct_Select_AcceptButton)
