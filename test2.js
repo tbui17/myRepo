@@ -48,14 +48,30 @@ function retry(fn, delay=3000, retries=3, err=null) {
     });
 }
 
-async function getElement(selector) {
-  let elem = document.querySelector(selector)
+async function getElement() {
+  let elem = document.querySelector('hellsdfdsfxo')
   if (elem == undefined) {
     throw new Error("error in sayHello function")
   }
 }
 
-retry(()=>getElement(`#nav-users > div > div`))
+let funct12 = ()=>document.querySelector("#main > div:nth-child(3) > a.w3-left.w3-btn")
+
+async function errorCheck(funct){
+
+  try {
+    let elem = funct()
+    if (elem == undefined) {
+      throw new Error("error11111")
+    }
+  } catch (error) {
+    throw new Error("error22222")
+  }
+}
+
+function wrapRetryErrorCheck(funct) {
+  retry(()=>errorCheck(funct))
+}
 
 
 // function waitForElm(selector) {
