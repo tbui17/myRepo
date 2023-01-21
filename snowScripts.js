@@ -172,10 +172,12 @@ When calling async functions, they must always be with await. Ex: await scripts.
   static regexEmail(input){
       let regexSubject = /(?<=Subject:).*/
       let subject = regexSubject.exec(input)[0]
-      let regexAboveSubject = /([\s\S]*)(?=\nSubject)/
-      let aboveSubject = regexAboveSubject.exec(input)[0]
+      let regexTo = /([\s\S]*)(?=\To: )/
+      let to = regexTo.exec(input)[0]
+      let regexAboveTo = /([\s\S]*)(?=\To: )/
+      let aboveTo = regexAboveTo.exec(input)[0]
       let regexSenderAndCC = /[a-zA-Z0-9_.]+@[a-zA-Z0-9_.]+/g
-      let senderAndCCMatches = [...aboveSubject.matchAll(regexSenderAndCC)]
+      let senderAndCCMatches = [...aboveTo.matchAll(regexSenderAndCC)]
       let senderAndCC = []
       for (const match in senderAndCCMatches) {
           if (Object.hasOwnProperty.call(senderAndCCMatches, match)) {
@@ -185,10 +187,10 @@ When calling async functions, they must always be with await. Ex: await scripts.
       }
       let sender = senderAndCC[0]
       let CC = senderAndCC.join("; ")
-      console.log(subject)
       let arrayEmail = {
           'sender':`${sender};`,
           'CC':CC,
+          'to':to,
           'subject':subject,
           'contents':input
       }
