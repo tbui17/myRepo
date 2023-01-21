@@ -1,10 +1,22 @@
+const deepSelectorAll = (node,selector) => {
+  const nodes = [...node.querySelectorAll(selector)],
+      nodeIterator = document.createNodeIterator(node, Node.ELEMENT_NODE);
+  let currentNode;
+  while (currentNode = nodeIterator.nextNode()) {
+      if(currentNode.shadowRoot) {
+          nodes.push(...deepSelectorAll(currentNode.shadowRoot,selector));
+      }
+  }
+  return nodes;
+}
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function retry(fn, delay=200, retries=5, err=null) {
   if (!retries) {
-    console.log(`(Retry Function) Failed. Out of tries.`)
+    console.log(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`)
     return Promise.reject(err);
   }
   return fn().catch(async err => {
@@ -46,11 +58,12 @@ async function errorCheck(funct){
     }
     console.log(`Success with parameter ${funct}`)
   } catch (error) {
+    console.log("There was an error")
+    console.log(error)
     throw new Error("error22222")
   }
   
 }
-
 async function waitForExist(funct) {
   await retry(()=>errorCheck(funct))
 }
