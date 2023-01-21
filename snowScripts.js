@@ -137,19 +137,31 @@ When calling async functions, they must always be with await. Ex: await scripts.
   // main scripts
   static async accountLocked() {
     //Accept, create INC, use account locked template, save page, open and send mail, 
-      let arrayMail = await scripts.getDescriptionText(csPage)
+      let arrayEmail = await scripts.getDescriptionText(csPage)
       await scripts.createIncTicketInCsPage()
       await scripts.activateTemplate(incidentPage,'accountLocked')
 
       await scripts.openMail(incidentPage)
-      // await scripts.sendMail(arrayMail, )
+      // await scripts.sendMail(arrayEmail, )
   } 
 
   
   
-  static async threeTouchInc(){
-    scripts.changeFollowUpTwoDays()
-    scripts.openMail(incidentPage)
+  static async threeTouchInc(touchNumber){
+    let arrayEmail = scripts.getDescriptionText(incidentPage)
+    await scripts.changeFollowUpTwoDays()
+    if (touchNumber == 1) {
+      await scripts.writeWorkNotes(incidentPage, savedStrings.followUpStringWorkNotes1)
+      await scripts.openMail(incidentPage)
+      await scripts.sendMail(arrayEmail, savedStrings.followUpStringMail1)
+    } else if (touchNumber) {
+        await scripts.writeWorkNotes(incidentPage, savedStrings.followUpStringWorkNotes2)
+        await scripts.openMail(incidentPage)
+        await scripts.sendMail(arrayEmail, savedStrings.followUpStringMail2)
+    } else if (touchNumber == 3) {
+        throw new Error('This code is not finished.')
+    } else {throw new Error('Not a from 1-3.')}
+    
   }
 
   // mini scripts
@@ -283,8 +295,12 @@ When calling async functions, they must always be with await. Ex: await scripts.
 class savedStrings{
 
   static accountLockedStringMail = ""
-  static followUpStringMail = ""
-  static followUpStringWorkNotes = ""
+  static followUpStringMail1 = ""
+  static followUpStringWorkNotes1 = ""
+  static followUpStringMail2 = savedStrings.followUpStringMail1
+  static followUpStringWorkNotes2 = ""
+  static followUpStringMail3 = ""
+  static followUpStringWorkNotes3 = ""
 
 }
 
