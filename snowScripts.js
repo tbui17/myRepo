@@ -72,6 +72,7 @@ class csPage {
 
 class incidentPage {
   
+  // these buttons have a shadow root directly underneath. The only other way to differentiate them is their index number which means they may accidentally refer to a different button if their positions change
   static createSecurityIncident = ()=>{}
   static saveButton = ()=>{}
 
@@ -80,7 +81,7 @@ class incidentPage {
   static composeEmail = ()=>{}
   
 
-
+  //may be prone to breaking if search results return more than one template
   static templateButton = ()=>{}
   static templateSearchBar = ()=>{}
   static undoButton = ()=>{}
@@ -89,6 +90,7 @@ class incidentPage {
   static accountLockedTemplate = ()=>{}
   static categoriesTemplate = ()=>{}
   static emailsTemplate = ()=>{}
+  static followUpTemplate = ()=>{}
 
 
   static descriptionBox = ()=>{}
