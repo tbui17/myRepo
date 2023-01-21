@@ -63,22 +63,24 @@ class csPage {
     static saveButton = ()=>{}
 
     //All elements under More Actions button are hidden until moreActions is pressed, wait 0.1s for element to appear.
-    static moreActions = ()=>{}
-    static composeEmail = ()=>{}
-    static createIncident = ()=>{}
+    static moreActionsButton = ()=>{}
+    static composeEmailButton = ()=>{}
+    static createIncidentButton = ()=>{}
 
     static descriptionBox = ()=>{}
-    static shortDescriptionBox = ()=>{}
+    static shortDescriptionField = ()=>{}
     static workNotesBox = ()=>{}
 }
 
 class incidentPage {
     
-    static moreActions = ()=>{}
-    static composeEmail = ()=>{}
-    
     static createSecurityIncident = ()=>{}
     static saveButton = ()=>{}
+
+
+    static moreActionsButton = ()=>{}
+    static composeEmail = ()=>{}
+    
 
 
     static templateButton = ()=>{}
@@ -92,10 +94,10 @@ class incidentPage {
 
 
     static descriptionBox = ()=>{}
-    static shortDescriptionBox = ()=>{}
+    static shortDescriptionField = ()=>{}
     static workNotesBox = ()=>{}
     static callerField = ()=>{}
-    static followUpDate = ()=>{}
+    static followUpDateField = ()=>{}
     static statusChoice = ()=>{}
 
     // ribbon
@@ -131,24 +133,26 @@ class oldEmailPage{
 }
 
 class scripts{
-
+/*
+When calling async functions, they must always be with await. Ex: await scripts.accountLocked()
+*/
     // main scripts
     static async accountLocked() {
- 
+      //Accept, create INC, use account locked template, save page, open and send mail, 
         let arrayMail = await scripts.getDescriptionText(csPage)
         await scripts.createIncTicketInCsPage()
         await scripts.activateTemplate(incidentPage,'accountLocked')
-        await scripts.openMail()
-        await scripts.sendMail(arrayMail)
-    }
 
+        await scripts.openMail(incidentPage)
+        // await scripts.sendMail(arrayMail, )
+    } 
 
     
-    static async getInfoFromAdditionalUserDetailsPage(){
-            // work in progress
+    
+    static async threeTouchInc(){
+      scripts.changeFollowUpTwoDays()
+      scripts.openMail(incidentPage)
     }
-
-
 
     // mini scripts
 
@@ -183,11 +187,12 @@ class scripts{
 
     static async createIncTicketInCsPage(){
         //create the incident ticket
+
         await csPage.acceptButton().click()
         // await wrapRetryErrorCheck(funct) //need to check for element that loads on page after accept
-        await csPage.moreActions().click()
-        await waitForExist(csPage.createIncident)
-        await csPage.createIncident().click()
+        await csPage.moreActionsButton().click()
+        await waitForExist(csPage.createIncidentButton)
+        await csPage.createIncidentButton().click()
         await waitForExist(incidentPage.templateButton)
     }
 
@@ -210,8 +215,27 @@ class scripts{
         let arrayEmail = scripts.regexEmail(descBoxContents)
         return arrayEmail
     }
+
+    
+    static async writeWorkNotes(page, text){
+        page.workNotesBox().value = text
+    }
     
     
+    
+    static async changeFollowUpTwoDays(){
+      await scripts.activateTemplate(incidentPage, '*followUp')
+      let dateInTwoDays = await this.datePlusTwoNight()
+      incidentPage.followUpDateField().value = dateInTwoDays
+    }
+    
+
+    
+    
+    static async savePage(page){
+      page.saveButton
+    }
+
     static async openMail(page){
         //open email page from the page you were on
         await page.moreActions().click()
@@ -219,7 +243,7 @@ class scripts{
         await page.composeEmail().click()
     }
     
-    static async sendMail(arrayEmail){
+    static async sendMail(arrayEmail, text){
         //send email
         await waitForExist(emailPage.textField) // double check entire email section
         emailPage.toField().value = arrayEmail.sender
@@ -258,4 +282,12 @@ class scripts{
     }
 }
 
-// scripts.accountLocked()
+class savedStrings{
+
+  static accountLockedStringMail = ""
+  static followUpStringMail = ""
+  static followUpStringWorkNotes = ""
+
+}
+
+// await scripts.accountLocked()
