@@ -38,19 +38,22 @@ function retry(fn, delay=200, retries=5, err=null) {
       if (delay != 0) {
         if (retries == 1) {
           delay += 2000
-          console.log('Last try, sleeping for 5000 ms longer than initial delay');
+          console.log('(Retry Function)Last retry, sleeping for 5000 ms longer than initial delay');
         }
         if (retries == 2) {
           delay += 2000
-          console.log('Last try, sleeping for 3000 ms longer than initial delay');
+          console.log('(Retry Function)4th retry, sleeping for 3000 ms longer than initial delay');
         }
         if (retries == 3) {
           delay += 500
-          console.log('3rd try, sleeping for 1000 ms longer than initial delay');
+          console.log('(Retry Function) 3rd retry, sleeping for 1000 ms longer than initial delay');
         }
         if (retries == 4) {
           delay += 500
-          console.log('2nd try, sleeping for 500 ms longer than initial delay');
+          console.log('(Retry Function) 2nd retry, sleeping for 500 ms longer than initial delay');
+        }
+        if (retries == 5) {
+          console.log('(Retry Function) 1st retry, sleeping for specified delay.');
         }
         console.log(`Sleeping for ${delay} ms...`);
         await sleep(delay)
@@ -74,17 +77,19 @@ async function errorCheck(funct){
     if (elem == undefined) {
       throw new Error("error11111")
     }
+    console.log(`Success with parameter ${funct}`)
   } catch (error) {
     throw new Error("error22222")
   }
+  
 }
 
-async function wrapRetryErrorCheck(funct) {
+async function waitForExist(funct) {
   await retry(()=>errorCheck(funct))
 }
 
 let funct12 = ()=>document.querySelector("#main > div:nth-child(3) > a.w3-left.w3-btn")
-wrapRetryErrorCheck(funct12)
+waitForExist(funct12)
 
 // function waitForElm(selector) {
 //   return new Promise(resolve => {
