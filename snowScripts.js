@@ -148,14 +148,17 @@ When calling async functions, they must always be with await. Ex: await scripts.
   
   
   static async threeTouchInc(touchNumber){
+    //for touch 1 and 2, change follow up to two days, write work note, save page, open mail, send mail.
     let arrayEmail = scripts.getDescriptionText(incidentPage)
     await scripts.changeFollowUpTwoDays()
     if (touchNumber == 1) {
       await scripts.writeWorkNotes(incidentPage, savedStrings.followUpStringWorkNotes1)
+      await scripts.savePage(incidentPage)
       await scripts.openMail(incidentPage)
       await scripts.sendMail(arrayEmail, savedStrings.followUpStringMail1)
-    } else if (touchNumber) {
+    } else if (touchNumber== 2) {
         await scripts.writeWorkNotes(incidentPage, savedStrings.followUpStringWorkNotes2)
+        await scripts.savePage(incidentPage)
         await scripts.openMail(incidentPage)
         await scripts.sendMail(arrayEmail, savedStrings.followUpStringMail2)
     } else if (touchNumber == 3) {
