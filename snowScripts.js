@@ -2,7 +2,7 @@ const deepSelectorAll = (node, selector) => {
   const nodes = [...node.querySelectorAll(selector)]
   const nodeIterator = document.createNodeIterator(node, Node.ELEMENT_NODE)
   let currentNode
-  while (currentNode = nodeIterator.nextNode()) {
+  while (currentNode === nodeIterator.nextNode()) {
     if (currentNode.shadowRoot) {
       nodes.push(...deepSelectorAll(currentNode.shadowRoot, selector))
     }
@@ -55,7 +55,7 @@ async function errorCheck (funct) {
     if (elem === undefined) {
       throw new Error('error11111')
     }
-    console.log(`(Error Check Retry Function) Success with parameter ${funct}`)
+    console.log(`Success with parameter ${funct}`)
   } catch (error) {
     console.log('There was an error')
     console.log(error)
@@ -133,10 +133,33 @@ class oldEmailPage {
 
 }
 
+class oldSearchPage {
+  static searchBar = () => {}
+  static searchButton = () => {}
+
+  static userIDField = () => {}
+  static firstNameField = () => {}
+  static lastNameField = () => {}
+  static locationField = () => {}
+  static cityField = () => {}
+  static zipCodeField = () => {}
+  static streetField = () => {}
+  static desklocationField = () => {}
+
+  static emailField = () => {}
+  static businessPhoneField = () => {}
+  static mobilePhoneField = () => {}
+  static euaDeptField = () => {}
+  static isContractorSelectionBox = () => {}
+
+  // This is not an element. This is an array of row elements containing text Personal Computer in the Model Category column.
+  static assetRows = () => {}
+}
 class scripts {
 /*
 When calling async functions, they must always be with await. Ex: await scripts.accountLocked()
 */
+
   // main scripts
   static async accountLocked () {
     // Accept, create INC, use account locked template, save page, open and send mail,
@@ -242,7 +265,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
 
   static async openMail (page) {
     // open email page from the page you were on
-    await page.moreActionsButton().click()
+    await page.moreActions().click()
     await waitForExist(page.composeEmail)
     await page.composeEmail().click()
   }
@@ -266,7 +289,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
       dayAdd = 2
     }
     const day = date.getDate() + dayAdd
-    const month = date.getMonth() + 1
+    const month = date.getMonth()
     const year = date.getFullYear()
 
     let dayFormatted = null
@@ -282,6 +305,45 @@ When calling async functions, they must always be with await. Ex: await scripts.
     // This arrangement can be altered based on how we want the date's format to appear.
     const currentDateTime = `${monthFormatted}/${dayFormatted}/${year} 08:00:00 AM`
     return currentDateTime
+  }
+
+  static async getProfileInformationOldSearchPage () {
+    await waitForExist(oldSearchPage.searchButton)
+  }
+
+  static getAssetTags (arrayOfRowsWithPersonalComputer) {
+    const arrayOfAssetTagValues = []
+    for (const rowWithPersonalComputer of arrayOfRowsWithPersonalComputer) {
+      const cellWithAssetTag = rowWithPersonalComputer.querySelect('td:nth-of-type(3)')
+      const assetTagValue = cellWithAssetTag.value
+
+      arrayOfAssetTagValues.push(assetTagValue)
+    }
+    const stringOfAssetTagValues = `${arrayOfAssetTagValues}`
+    return stringOfAssetTagValues
+  }
+
+  // static async locateClickUser (emailAddress) {
+  //   // locate entry for user on old search page and click button to navigate to profile
+  //   let buttonOnPage = () => $x(`//div[@class="user-left"][..//ul/li[text()="${emailAddress}"]]`)
+  //   await waitForExist(buttonOnPage)
+  //   await buttonOnPage().click()
+
+  static async oldSearchGetInfo () {
+    await waitForExist(oldSearchPage.userIDField)
+    await waitForExist(oldSearchPage.firstNameField)
+    await waitForExist(oldSearchPage.lastNameField)
+    await waitForExist(oldSearchPage.locationField)
+    await waitForExist(oldSearchPage.cityField)
+    await waitForExist(oldSearchPage.zipCodeField)
+    await waitForExist(oldSearchPage.streetField)
+    await waitForExist(oldSearchPage.desklocationField)
+
+    await waitForExist(oldSearchPage.emailField)
+    await waitForExist(oldSearchPage.businessPhoneField)
+    await waitForExist(oldSearchPage.mobilePhoneField)
+    await waitForExist(oldSearchPage.euaDeptField)
+    await waitForExist(oldSearchPage.isContractorSelectionBox)
   }
 }
 
