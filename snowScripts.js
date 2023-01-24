@@ -98,7 +98,7 @@ class csPage {
 
 const savedStrings = {
 
-  
+  accountLockedString: ''
 }
 
 class incidentPage {
@@ -189,7 +189,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
     await scripts.acceptThenCreateIncTicket()
     await scripts.activateTemplate(incidentPage, 'accountLocked')
     await scripts.openMail(incidentPage)
-    await scripts.sendMail(arrayEmail, )
+    await scripts.sendMail(incidentPage, arrayEmail, savedStrings.accountLockedString)
     // await scripts.savePage(incidentPage)
   }
 
@@ -253,7 +253,8 @@ When calling async functions, they must always be with await. Ex: await scripts.
     await csPage.acceptButton().click()
     await waitForExist(csPage.proposeSolutionsButton)
     await csPage.moreActionsButton().click()
-    await waitForExist(csPage.createIncidentButton).then(click)
+    await waitForExist(csPage.createIncidentButton)
+    await csPage.createIncidentButton.click()
     await waitForExist(incidentPage.templateButton)
   }
 
@@ -263,6 +264,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
 
     await page.templateButton().click()
     await waitForExist(page.templateSearchBar)
+    setFieldValue(page.templateSearchBar, `*${searchTerm}`)
     await waitForExist(page[`${searchTerm}Template`])
     await page[`${searchTerm}Template`]().click()
     await waitForExist(page.undoButton)
