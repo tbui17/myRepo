@@ -16,35 +16,40 @@ function sleep (ms) {
 
 function retry (fn, delay = 200, retries = 5, err = null) {
   if (!retries) {
-    console.log(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`)
+    console.groupEnd()
+    console.debug(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`)
     return Promise.reject(err)
   }
   return fn().catch(async err => {
-    console.log(`(Retry Function) Tries remaining: ${retries}`)
-    console.log('(Retry Function) Rejected. Retrying if there are tries remaining.')
+    if (retries < 5) {
+      console.groupEnd()
+    }
+    console.groupCollapsed(`Retry attempt: ${6-retries}/5`)
+    console.debug(`(Retry Function) Tries remaining: ${retries}`)
+    console.debug('(Retry Function) Rejected. Retrying if there are tries remaining.')
     if (delay !== 0) {
       if (retries === 1) {
         delay += 2000
-        console.log('(Retry Function)Last retry, sleeping for 5000 ms longer than initial delay')
+        console.debug('(Retry Function)Last retry, sleeping for 5000 ms longer than initial delay')
       }
       if (retries === 2) {
         delay += 2000
-        console.log('(Retry Function)4th retry, sleeping for 3000 ms longer than initial delay')
+        console.debug('(Retry Function)4th retry, sleeping for 3000 ms longer than initial delay')
       }
       if (retries === 3) {
         delay += 500
-        console.log('(Retry Function) 3rd retry, sleeping for 1000 ms longer than initial delay')
+        console.debug('(Retry Function) 3rd retry, sleeping for 1000 ms longer than initial delay')
       }
       if (retries === 4) {
         delay += 500
-        console.log('(Retry Function) 2nd retry, sleeping for 500 ms longer than initial delay')
+        console.debug('(Retry Function) 2nd retry, sleeping for 500 ms longer than initial delay')
       }
       if (retries === 5) {
-        console.log('(Retry Function) 1st retry, sleeping for specified delay.')
+        console.debug('(Retry Function) 1st retry, sleeping for specified delay.')
       }
-      console.log(`Sleeping for ${delay} ms...`)
+      console.debug(`(Retry Function) Sleeping for ${delay} ms...`)
       await sleep(delay)
-      console.log('Done sleeping.')
+      console.debug('(Retry Function) Done sleeping.')
     }
     return retry(fn, delay, (retries - 1), err)
   })
@@ -52,13 +57,17 @@ function retry (fn, delay = 200, retries = 5, err = null) {
 async function errorCheck (funct) {
   try {
     const elem = funct()
-    if (elem === undefined) {
-      throw new Error('error11111')
+    console.debug('(errorCheck) Checking. The values checked are elem and funct.', elem, funct)
+    if (elem === undefined || elem === null) {
+      console.debug('(ErrorCheck) (1/3) Failed. The parameter is listed below.')
+      console.debug('(ErrorCheck) (2/3) elem: ', elem)
+      console.debug('(ErrorCheck) (3/3) funct:', funct)
+      throw new Error(`(errorCheck)error1: Value is Null/Undefined. Value: ${elem}`)
     }
-    console.log(`Success with parameter ${funct}`)
+    console.debug(`(ErrorCheck) Success with parameter ${funct}`)
   } catch (error) {
-    console.log('There was an error')
-    console.log(error)
+    console.debug(`(ErrorCheck) There was an error: ${error}`)
+    console.debug(error)
     throw new Error('error22222')
   }
 }
@@ -133,27 +142,28 @@ class oldEmailPage {
 
 }
 
-class oldSearchPage {
-  static searchBar = () => {}
-  static searchButton = () => {}
+const oldSearchPage = {
+  // searchBar: () => document.querySelector('input'),
+  // searchButton: () => document.querySelector('input'),
 
-  static userIDField = () => {}
-  static firstNameField = () => {}
-  static lastNameField = () => {}
-  static locationField = () => {}
-  static cityField = () => {}
-  static zipCodeField = () => {}
-  static streetField = () => {}
-  static desklocationField = () => {}
+  // userIDField: () => document.querySelector('input'),
+  // firstNameField: () => document.querySelector('input'),
+  // lastNameField: () => document.querySelector('input'),
+  // locationField: () => document.querySelector('input'),
+  // cityField: () => document.querySelector('input'),
+  // zipCodeField: () => document.querySelector('input'),
+  // streetField: () => document.querySelector('input'),
+  // desklocationField: () => document.querySelector('input'),
 
-  static emailField = () => {}
-  static businessPhoneField = () => {}
-  static mobilePhoneField = () => {}
-  static euaDeptField = () => {}
-  static isContractorSelectionBox = () => {}
+  // emailField: () => document.querySelector('input'),
+  // businessPhoneField: () => document.querySelector('input'),
+  // mobilePhoneField: () => document.querySelector('input'),
+  // euaDeptField: () => document.querySelector('input'),
+  // isContractorSelectionBox: () => document.querySelector('input'),
 
   // This is not an element. This is an array of row elements containing text Personal Computer in the Model Category column.
-  static assetRows = () => {}
+  assetRows: () => {}
+
 }
 class scripts {
 /*
@@ -164,11 +174,11 @@ When calling async functions, they must always be with await. Ex: await scripts.
   static async accountLocked () {
     // Accept, create INC, use account locked template, save page, open and send mail,
     const arrayEmail = await scripts.getDescriptionText(csPage)
-    await scripts.createIncTicketInCsPage()
+    await scripts.acceptThenCreateIncTicket()
     await scripts.activateTemplate(incidentPage, 'accountLocked')
-
     await scripts.openMail(incidentPage)
     // await scripts.sendMail(arrayEmail, )
+    // await scripts.savePage(incidentPage)
   }
 
   static async threeTouchInc (touchNumber) {
@@ -190,6 +200,11 @@ When calling async functions, they must always be with await. Ex: await scripts.
     } else { throw new Error('Not a from 1-3.') }
   }
 
+  static async jsonGetInfo () {
+    const output = await scripts.oldSearchGetInfo()
+    const outputInJson = JSON.stringify(output, null, 4)
+    console.log(outputInJson)
+  }
   // mini scripts
 
   static regexEmail (input) {
@@ -220,7 +235,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
     return arrayEmail
   }
 
-  static async createIncTicketInCsPage () {
+  static async acceptThenCreateIncTicket () {
     // create the incident ticket
 
     await csPage.acceptButton().click()
@@ -260,7 +275,8 @@ When calling async functions, they must always be with await. Ex: await scripts.
   }
 
   static async savePage (page) {
-    page.saveButton()
+    await waitForExist(page.saveButton)
+    await page.saveButton().click()
   }
 
   static async openMail (page) {
@@ -270,14 +286,14 @@ When calling async functions, they must always be with await. Ex: await scripts.
     await page.composeEmail().click()
   }
 
-  static async sendMail (arrayEmail, text) {
+  static async sendMail (page, arrayEmail, text) {
     // send email
-    await waitForExist(emailPage.textField) // double check entire email section
-    emailPage.toField().value = arrayEmail.sender
-    emailPage.ccField().value = arrayEmail.CC
-    // emailPageElements.textField.innerHTML = // need to get from user input
+    await waitForExist(page.textField) // double check entire email section
+    page.toField().value = arrayEmail.sender
+    page.ccField().value = arrayEmail.CC
+    page.textField().innerHTML = text
     await sleep(500) // optional
-    // emailPageElements.sendButton().click() // ensure everything else is functional first
+    // await emailPageElements.sendButton().click() // ensure everything else is functional first
   }
 
   static async datePlusTwoNight () {
@@ -307,54 +323,73 @@ When calling async functions, they must always be with await. Ex: await scripts.
     return currentDateTime
   }
 
-  static async getProfileInformationOldSearchPage () {
-    await waitForExist(oldSearchPage.searchButton)
-  }
-
-  static getAssetTags (arrayOfRowsWithPersonalComputer) {
-    const arrayOfAssetTagValues = []
-    for (const rowWithPersonalComputer of arrayOfRowsWithPersonalComputer) {
-      const cellWithAssetTag = rowWithPersonalComputer.querySelect('td:nth-of-type(3)')
-      const assetTagValue = cellWithAssetTag.value
-
-      arrayOfAssetTagValues.push(assetTagValue)
+  static getAssetTagsOldSearchPage () {
+    const arrayOfRowsWithPersonalComputer = oldSearchPage.assetRows()
+    try {
+      const arrayOfAssetTagValues = []
+      for (const rowWithPersonalComputer of arrayOfRowsWithPersonalComputer) {
+        console.debug('(getAssetTags) Getting row:', rowWithPersonalComputer)
+        const cellWithAssetTag = rowWithPersonalComputer.querySelector('td:nth-of-type(3)')
+        // const cellWithAssetTag = rowWithPersonalComputer.querySelector('input')
+        const assetTagValue = cellWithAssetTag.value
+        arrayOfAssetTagValues.push(assetTagValue)
+      }
+      const stringOfAssetTagValues = `${arrayOfAssetTagValues}`
+      return stringOfAssetTagValues
+    } catch (error) {
+      console.debug('(getAssetTags)error: ', error)
+      console.debug('(getAssetTags) No element containing the asset tag was found.')
+      return ('n/a')
     }
-    const stringOfAssetTagValues = `${arrayOfAssetTagValues}`
-    return stringOfAssetTagValues
   }
 
-  // static async locateClickUser (emailAddress) {
-  //   // locate entry for user on old search page and click button to navigate to profile
-  //   let buttonOnPage = () => $x(`//div[@class="user-left"][..//ul/li[text()="${emailAddress}"]]`)
-  //   await waitForExist(buttonOnPage)
-  //   await buttonOnPage().click()
+  static async locateClickUser () {
+    // locate entry for user on old search page and click button to navigate to profile. Must have email address already in search bar.
+    await waitForExist(oldSearchPage.searchBar)
+    const emailAddress = oldSearchPage.searchBar().value
+    const buttonOnPage = () => $x(`//div[@class="user-left"][..//ul/li[text()="${emailAddress}"]]`)
+    await waitForExist(buttonOnPage)
+    await buttonOnPage().click()
+  }
 
   static async oldSearchGetInfo () {
-    await waitForExist(oldSearchPage.userIDField)
-    await waitForExist(oldSearchPage.firstNameField)
-    await waitForExist(oldSearchPage.lastNameField)
-    await waitForExist(oldSearchPage.locationField)
-    await waitForExist(oldSearchPage.cityField)
-    await waitForExist(oldSearchPage.zipCodeField)
-    await waitForExist(oldSearchPage.streetField)
-    await waitForExist(oldSearchPage.desklocationField)
+    // get all fields in search information and append them to the list
+    const arrayOldSearchPageValues = Object.entries(oldSearchPage)
 
-    await waitForExist(oldSearchPage.emailField)
-    await waitForExist(oldSearchPage.businessPhoneField)
-    await waitForExist(oldSearchPage.mobilePhoneField)
-    await waitForExist(oldSearchPage.euaDeptField)
-    await waitForExist(oldSearchPage.isContractorSelectionBox)
+    console.debug('(oldSearchGetInfo) Beginning waitForExist loop')
+    for (const [key, value] of arrayOldSearchPageValues) {
+      if (key === 'assetRows') {
+        console.debug(`(oldSearchGetInfo) Skipping over ${key} as specified in oldSearchGetInfo`)
+        break
+      }
+      await console.debug(`(oldSearchGetInfo) Checking if exists: ${key}`)
+      await waitForExist(value)
+    }
+
+    console.debug('(oldSearchGetInfo) All field elements exist.')
+    console.debug('(oldSearchGetInfo) Now appending element values to array')
+
+    const arrayFieldValues = {}
+
+    console.debug('(oldSearchGetInfo) Beginning append to list loop')
+    for (const [key, value] of arrayOldSearchPageValues) {
+      if (key === 'assetRows') {
+        console.debug(`(oldSearchGetInfo) Not appending and will skip over ${key} as specified in oldSearchGetInfo`)
+        break
+      }
+      console.debug(`(oldSearchGetInfo) Pushing into arrayFieldValues array: "${key}" element whose value is`, value().value)
+      // arrayFieldValues.push(value().value)
+      arrayFieldValues[`${key}`] = value().value
+    }
+    // appending asset tags to list
+    let assetTags = scripts.getAssetTagsOldSearchPage()
+    arrayFieldValues['Asset Tag'] = assetTags
+    console.debug(`(oldSearchGetInfo) For the key: "Asset Tag", the value ${assetTags} was pushed.`)
+    return arrayFieldValues
   }
+
 }
 
-class savedStrings {
-  static accountLockedStringMail = ''
-  static followUpStringMail1 = ''
-  static followUpStringWorkNotes1 = ''
-  static followUpStringMail2 = savedStrings.followUpStringMail1
-  static followUpStringWorkNotes2 = ''
-  static followUpStringMail3 = ''
-  static followUpStringWorkNotes3 = ''
-}
+const savedToClipboard = {}
 
-// await scripts.accountLocked()
+await scripts.jsonGetInfo()
