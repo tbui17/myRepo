@@ -1,3 +1,9 @@
+function setFieldValue(fieldElement, value) {
+  fieldElement.focus()
+  fieldElement.select()
+  document.execCommand('insertText', false, value)
+}
+
 const deepSelectorAll = (node, selector) => {
   const nodes = [...node.querySelectorAll(selector)]
   const nodeIterator = document.createNodeIterator(node, Node.ELEMENT_NODE)
@@ -83,10 +89,16 @@ class csPage {
   static moreActionsButton = () => {}
   static composeEmailButton = () => {}
   static createIncidentButton = () => {}
+  static proposeSolutionsButton = () => {}
 
   static descriptionBox = () => {}
   static shortDescriptionField = () => {}
   static workNotesBox = () => {}
+}
+
+const savedStrings = {
+
+  
 }
 
 class incidentPage {
@@ -177,7 +189,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
     await scripts.acceptThenCreateIncTicket()
     await scripts.activateTemplate(incidentPage, 'accountLocked')
     await scripts.openMail(incidentPage)
-    // await scripts.sendMail(arrayEmail, )
+    await scripts.sendMail(arrayEmail, )
     // await scripts.savePage(incidentPage)
   }
 
@@ -239,10 +251,9 @@ When calling async functions, they must always be with await. Ex: await scripts.
     // create the incident ticket
 
     await csPage.acceptButton().click()
-    // await wrapRetryErrorCheck(funct) //need to check for element that loads on page after accept
+    await waitForExist(csPage.proposeSolutionsButton)
     await csPage.moreActionsButton().click()
-    await waitForExist(csPage.createIncidentButton)
-    await csPage.createIncidentButton().click()
+    await waitForExist(csPage.createIncidentButton).then(click)
     await waitForExist(incidentPage.templateButton)
   }
 
@@ -261,6 +272,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
     // get description data
     const descBoxContents = page.descriptionBox().value // double check this
     const arrayEmail = scripts.regexEmail(descBoxContents)
+    console.log('(getDescriptionText) ', arrayEmail)
     return arrayEmail
   }
 
@@ -289,9 +301,13 @@ When calling async functions, they must always be with await. Ex: await scripts.
   static async sendMail (page, arrayEmail, text) {
     // send email
     await waitForExist(page.textField) // double check entire email section
-    page.toField().value = arrayEmail.sender
-    page.ccField().value = arrayEmail.CC
-    page.textField().innerHTML = text
+    // page.toField().value = arrayEmail.sender
+    // page.ccField().value = arrayEmail.CC
+    // page.textField().innerHTML = text
+    setFieldValue(page.toField(), arrayEmail.sender)
+    setFieldValue(page.ccField(), arrayEmail.sender)
+    textBr = text.replaceAll('\n', '<br>')
+    page.textField().innerHTML = textBr
     await sleep(500) // optional
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
   }
@@ -390,6 +406,6 @@ When calling async functions, they must always be with await. Ex: await scripts.
 
 }
 
-const savedToClipboard = {}
+
 
 await scripts.jsonGetInfo()
