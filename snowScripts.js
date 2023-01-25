@@ -140,6 +140,10 @@ class scripts {
   static regexEmail (input) {
     const regexSubject = /(?<=Subject:).*/
     const subject = regexSubject.exec(input)[0]
+    if (subject === null) {
+      const arrayEmail = 111
+      return arrayEmail
+    }
     const regexTo = /(?<=To: ).*/
     const to = regexTo.exec(input)[0]
     const regexAboveTo = /([\s\S]*)(?=To: )/
@@ -157,9 +161,9 @@ class scripts {
     const CC = senderAndCC.join('; ')
     const arrayEmail = {
       sender: `${sender};`,
-      CC,
-      to,
-      subject,
+      CC: `${CC}`,
+      to: `${to}`,
+      subject: `${subject}`,
       contents: input
     }
     return arrayEmail
@@ -193,7 +197,7 @@ class scripts {
 
   static async getDescriptionText (page) {
     // get description data
-    const descBoxContents = page.descriptionBox().value // double check this
+    const descBoxContents = page.descriptionBox().value
     const arrayEmail = scripts.regexEmail(descBoxContents)
     console.log('(getDescriptionText) ', arrayEmail)
     return arrayEmail
@@ -222,6 +226,10 @@ class scripts {
 
   static async sendMail (page, arrayEmail, text) {
     // send email
+    if (arrayEmail === 111) {
+      console.log('(sendMail) Subject does not contain email. Cancelling send mail.')
+      return
+    }
     await waitForExist(page.textField) // double check entire email section
     // page.toField().value = arrayEmail.sender
     // page.ccField().value = arrayEmail.CC
