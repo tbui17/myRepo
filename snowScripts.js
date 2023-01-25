@@ -412,7 +412,11 @@ function setFieldValue(selector, value, parentDocumentSelector = document) {
   console.log('(setFieldValue fieldElement and value are)', selector, value);
   selector().focus()
   selector().select()
-  parentDocumentSelector.execCommand('insertText', false, value)
+  if (parentDocumentSelector !== document) {
+    parentDocumentSelector.execCommand('insertText', false, value)
+  } else {
+    document.execCommand('insertText', false, value)
+  }
 }
 
 function queryCleaner(queryAsString) {
