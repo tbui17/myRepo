@@ -50,6 +50,9 @@ class incidentPage {
 }
 
 class emailPage {
+  static emailDocument = () => {}
+  static bodyDocument = () => {}
+
   static toField = () => {}
   static ccField = () => {}
   static subjectField = () => {}
@@ -234,8 +237,8 @@ class scripts {
     // page.toField().value = arrayEmail.sender
     // page.ccField().value = arrayEmail.CC
     // page.textField().innerHTML = text
-    setFieldValue(page.toField(), arrayEmail.sender)
-    setFieldValue(page.ccField(), arrayEmail.sender)
+    setFieldValue(page.toField(), arrayEmail.sender, emailPage.emailDocument)
+    setFieldValue(page.ccField(), arrayEmail.sender, emailPage.emailDocument)
     textBr = text.replaceAll('\n', '<br>')
     page.textField().innerHTML = scripts.convertToHtml(text)
     await sleep(500) // optional
