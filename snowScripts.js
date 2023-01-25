@@ -3,9 +3,21 @@ function elementValidation(page) {
   for (const entry of entries) {
     let key = entry[0]
     let value = entry[1]
-    let valueActive = value()
+    try {
+      var valueActive = value()
+    } catch (error) {
+      if (error instanceof TypeError) {
+        valueActive = 'null (Shadow Root)'
+      } else { throw error }
+    }
     if (valueActive === null) {
       console.groupCollapsed(`%c${key} was null`, 'color: #27ACEF')
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else if (valueActive === 'null (Shadow Root)') {
+      console.groupCollapsed(`%c${key} was undefined`, 'color: #E713A3')
       console.log(`key: ${key}`)
       console.log(`value: ${value}`)
       console.log(`valueActive: ${valueActive}`)
