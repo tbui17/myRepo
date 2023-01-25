@@ -5,6 +5,13 @@ function setFieldValue(fieldElement, value) {
   document.execCommand('insertText', false, value)
 }
 
+function queryCleaner(queryAsString) {
+  // const regex = /(#chrome-tab-panel-record_[\w\d]*)/
+  // const step2 = regex.exec(queryAsString)[0]
+  let final = queryAsString.replace(/(#chrome-tab-panel-record_[\w\d]*)/, "[class='chrome-tab-panel is-active']")
+  console.log(final)
+}
+
 const deepSelectorAll = (node, selector) => {
   const nodes = [...node.querySelectorAll(selector)]
   const nodeIterator = document.createNodeIterator(node, Node.ELEMENT_NODE)
