@@ -1,6 +1,7 @@
 const savedStrings = {
 
-  accountLockedString: ''
+  accountLockedString: '',
+  deskEmail: ''
 }
 
 class csPage {
@@ -151,8 +152,10 @@ class scripts {
     const to = regexTo.exec(input)[0]
     const regexAboveTo = /([\s\S]*)(?=To: )/
     const aboveTo = regexAboveTo.exec(input)[0]
+    const aboveToLowercase = aboveTo.toLowerCase()
+    const aboveToLowercaseFiltered = aboveToLowercase.replace(savedStrings.deskEmail, '')
     const regexSenderAndCC = /[a-zA-Z0-9_.]+@[a-zA-Z0-9_.]+/g
-    const senderAndCCMatches = [...aboveTo.matchAll(regexSenderAndCC)]
+    const senderAndCCMatches = [...aboveToLowercaseFiltered.matchAll(regexSenderAndCC)]
     const senderAndCC = []
     for (const match in senderAndCCMatches) {
       if (Object.hasOwnProperty.call(senderAndCCMatches, match)) {
@@ -233,14 +236,15 @@ class scripts {
       console.log('(sendMail) Subject does not contain email. Cancelling send mail.')
       return
     }
+    const textBr = scripts.convertToHtml(text)
     await waitForExist(page.textField) // double check entire email section
     // page.toField().value = arrayEmail.sender
     // page.ccField().value = arrayEmail.CC
     // page.textField().innerHTML = text
-    setFieldValue(page.toField(), arrayEmail.sender, emailPage.emailDocument)
-    setFieldValue(page.ccField(), arrayEmail.sender, emailPage.emailDocument)
-    textBr = text.replaceAll('\n', '<br>')
-    page.textField().innerHTML = scripts.convertToHtml(text)
+    await sleep(3000)
+    setFieldValue(page.toField, arrayEmail.sender, emailPage.emailDocument)
+    setFieldValue(page.ccField, arrayEmail.sender, emailPage.emailDocument)
+    page.textField().innerHTML = textBr
     await sleep(500) // optional
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
   }
@@ -338,7 +342,8 @@ class scripts {
   }
 
   static convertToHtml(string) {
-    string.replace('\n', '<br>')
+    const res = string.replace('\n', '<br>')
+    return res
   }
 }
 
@@ -408,12 +413,12 @@ function elementValidation(page) {
   }
 }
 
-function setFieldValue(selector, value, parentDocumentSelector = document) {
+function setFieldValue(selector, value, parentDocumentSelector = 222) {
   console.log('(setFieldValue fieldElement and value are)', selector, value);
   selector().focus()
   selector().select()
-  if (parentDocumentSelector !== document) {
-    parentDocumentSelector.execCommand('insertText', false, value)
+  if (parentDocumentSelector() !== 222) {
+    parentDocumentSelector().execCommand('insertText', false, value)
   } else {
     document.execCommand('insertText', false, value)
   }
@@ -422,7 +427,7 @@ function setFieldValue(selector, value, parentDocumentSelector = document) {
 function queryCleaner(queryAsString) {
   // const regex = /(#chrome-tab-panel-record_[\w\d]*)/
   // const step2 = regex.exec(queryAsString)[0]
-  let final = queryAsString.replace(/(#chrome-tab-panel-record_[\w\d]*)/, "[class='chrome-tab-panel is-active']")
+  let final = queryAsString.replaceAll(/(#chrome-tab-panel-record_[\w\d]*)/, "[class='chrome-tab-panel is-active']")
   console.log(final)
 }
 
@@ -498,3 +503,5 @@ async function errorCheck (funct) {
 async function waitForExist (funct) {
   await retry(() => errorCheck(funct))
 }
+
+console.log('Add the desk email.')
