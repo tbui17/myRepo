@@ -1,7 +1,7 @@
-function setFieldValue(fieldElement, value) {
-  console.log('(setFieldValue fieldElement and value are)', fieldElement, value);
-  fieldElement().focus()
-  fieldElement().select()
+function setFieldValue(selector, value) {
+  console.log('(setFieldValue fieldElement and value are)', selector, value);
+  selector().focus()
+  selector().select()
   document.execCommand('insertText', false, value)
 }
 
@@ -192,6 +192,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
     const arrayEmail = await scripts.getDescriptionText(csPage)
     await scripts.acceptThenCreateIncTicket()
     await scripts.activateTemplate(incidentPage, 'accountLocked')
+    await scripts.changeFollowUpTwoDays()
     await scripts.openMail(incidentPage)
     await scripts.sendMail(incidentPage, arrayEmail, savedStrings.accountLockedString)
     // await scripts.savePage(incidentPage)
@@ -291,7 +292,6 @@ When calling async functions, they must always be with await. Ex: await scripts.
 
   static async changeFollowUpTwoDays () {
     const dateInTwoDays = scripts.datePlusTwoNight()
-    await scripts.activateTemplate(incidentPage, '*followUp')
     setFieldValue(incidentPage.followUpDateField, dateInTwoDays)
   }
 
