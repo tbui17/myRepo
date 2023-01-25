@@ -107,7 +107,7 @@ class scripts {
     await scripts.activateTemplate(incidentPage, 'accountLocked')
     await scripts.changeFollowUpTwoDays()
     await scripts.openMail(incidentPage)
-    await scripts.sendMail(incidentPage, arrayEmail, savedStrings.accountLockedString)
+    await scripts.sendMail(emailPage, arrayEmail, savedStrings.accountLockedString)
     // await scripts.savePage(incidentPage)
   }
 
@@ -215,7 +215,7 @@ class scripts {
 
   static async openMail (page) {
     // open email page from the page you were on
-    await page.moreActions().click()
+    await page.moreActionsButton().click()
     await waitForExist(page.composeEmail)
     await page.composeEmail().click()
   }
@@ -229,7 +229,7 @@ class scripts {
     setFieldValue(page.toField(), arrayEmail.sender)
     setFieldValue(page.ccField(), arrayEmail.sender)
     textBr = text.replaceAll('\n', '<br>')
-    page.textField().innerHTML = scripts.convertToHtml(savedStrings.accountLockedString)
+    page.textField().innerHTML = scripts.convertToHtml(text)
     await sleep(500) // optional
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
   }
@@ -397,11 +397,11 @@ function elementValidation(page) {
   }
 }
 
-function setFieldValue(selector, value) {
+function setFieldValue(selector, value, parentDocumentSelector = document) {
   console.log('(setFieldValue fieldElement and value are)', selector, value);
   selector().focus()
   selector().select()
-  document.execCommand('insertText', false, value)
+  parentDocumentSelector.execCommand('insertText', false, value)
 }
 
 function queryCleaner(queryAsString) {
