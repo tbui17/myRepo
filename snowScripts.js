@@ -1,3 +1,17 @@
+function descend(el, sel, parent) {
+  if (el.matches(sel)) {
+      yield parent ? el.parentElement : el;
+  }
+  if (el.shadowRoot) {
+      for (const child of el.shadowRoot.children) {
+          yield* descend(child, sel, parent);
+      }
+  }
+  for (const child of el.children) {
+      yield* descend(child, sel, parent);
+  }
+};
+
 function elementValidation(page) {
   let entries = Object.entries(page)
   for (const entry of entries) {
@@ -17,7 +31,7 @@ function elementValidation(page) {
       console.log(`valueActive: ${valueActive}`)
       console.groupEnd()
     } else if (valueActive === 'null (Shadow Root)') {
-      console.groupCollapsed(`%c${key} was undefined`, 'color: #E713A3')
+      console.groupCollapsed(`%c${key} was null (Shadow Root)`, 'color: #E713A3')
       console.log(`key: ${key}`)
       console.log(`value: ${value}`)
       console.log(`valueActive: ${valueActive}`)
@@ -35,7 +49,7 @@ function elementValidation(page) {
       console.log(`valueActive: ${valueActive}`)
       console.groupEnd()
     } else if (valueActive instanceof Element) {
-      console.groupCollapsed(`%c${key} exists.`, 'color: #00FF00')
+      console.groupCollapsed(`%c${key} exists.`, 'color: #168E2F')
       console.log(`key: ${key}`)
       console.log(`value: ${value}`)
       console.log(`valueActive: ${valueActive}`)
