@@ -1,4 +1,4 @@
-function descend(el, sel, parent) {
+function* descend(el, sel, parent) {
   if (el.matches(sel)) {
       yield parent ? el.parentElement : el;
   }
