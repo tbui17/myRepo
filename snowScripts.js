@@ -1,3 +1,43 @@
+function elementValidation(page) {
+  let entries = Object.entries(page)
+  for (const entry of entries) {
+    let key = entry[0]
+    let value = entry[1]
+    let valueActive = value()
+    if (valueActive === null) {
+      console.group(`${key} was null`)
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else if (valueActive === undefined) {
+      console.group(`${key} was undefined`)
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else if (valueActive === false) {
+      console.group(`${key} was false`)
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else if (valueActive instanceof Element) {
+      console.group(`${key} exists.`)
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else {
+      console.group(`${key} is unknown??.`)
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    }
+  }
+}
+
 function setFieldValue(selector, value) {
   console.log('(setFieldValue fieldElement and value are)', selector, value);
   selector().focus()
@@ -107,8 +147,8 @@ const savedStrings = {
 
 class incidentPage {
   // these buttons have a shadow root directly underneath. The only other way to differentiate them is their index number which means they may accidentally refer to a different button if their positions change
-  static createSecurityIncident = () => {}
-  static saveButton = () => {}
+  static createSecurityIncident = () => document.querySelector("#rso > div:nth-child(2) > div > div > div > div:nth-child(2) > div")
+  static saveButton = () => document.querySelector("#rso > dasdiv:nth-child(2) > div > div > div > div:nth-child(2) > div")
 
   static moreActionsButton = () => {}
   static composeEmail = () => {}
