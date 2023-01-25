@@ -1,6 +1,7 @@
 function setFieldValue(fieldElement, value) {
-  fieldElement.focus()
-  fieldElement.select()
+  console.log('(setFieldValue fieldElement and value are)', fieldElement, value);
+  fieldElement().focus()
+  fieldElement().select()
   document.execCommand('insertText', false, value)
 }
 
@@ -22,40 +23,35 @@ function sleep (ms) {
 
 function retry (fn, delay = 200, retries = 5, err = null) {
   if (!retries) {
-    console.groupEnd()
-    console.debug(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`)
+    console.log(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`)
     return Promise.reject(err)
   }
   return fn().catch(async err => {
-    if (retries < 5) {
-      console.groupEnd()
-    }
-    console.groupCollapsed(`Retry attempt: ${6-retries}/5`)
-    console.debug(`(Retry Function) Tries remaining: ${retries}`)
-    console.debug('(Retry Function) Rejected. Retrying if there are tries remaining.')
+    console.log(`(Retry Function) Tries remaining: ${retries}`)
+    console.log('(Retry Function) Rejected. Retrying if there are tries remaining.')
     if (delay !== 0) {
       if (retries === 1) {
         delay += 2000
-        console.debug('(Retry Function)Last retry, sleeping for 5000 ms longer than initial delay')
+        console.log('(Retry Function)Last retry, sleeping for 5000 ms longer than initial delay')
       }
       if (retries === 2) {
         delay += 2000
-        console.debug('(Retry Function)4th retry, sleeping for 3000 ms longer than initial delay')
+        console.log('(Retry Function)4th retry, sleeping for 3000 ms longer than initial delay')
       }
       if (retries === 3) {
         delay += 500
-        console.debug('(Retry Function) 3rd retry, sleeping for 1000 ms longer than initial delay')
+        console.log('(Retry Function) 3rd retry, sleeping for 1000 ms longer than initial delay')
       }
       if (retries === 4) {
         delay += 500
-        console.debug('(Retry Function) 2nd retry, sleeping for 500 ms longer than initial delay')
+        console.log('(Retry Function) 2nd retry, sleeping for 500 ms longer than initial delay')
       }
       if (retries === 5) {
-        console.debug('(Retry Function) 1st retry, sleeping for specified delay.')
+        console.log('(Retry Function) 1st retry, sleeping for specified delay.')
       }
-      console.debug(`(Retry Function) Sleeping for ${delay} ms...`)
+      console.log(`(Retry Function) Sleeping for ${delay} ms...`)
       await sleep(delay)
-      console.debug('(Retry Function) Done sleeping.')
+      console.log('(Retry Function) Done sleeping.')
     }
     return retry(fn, delay, (retries - 1), err)
   })
@@ -63,17 +59,18 @@ function retry (fn, delay = 200, retries = 5, err = null) {
 async function errorCheck (funct) {
   try {
     const elem = funct()
-    console.debug('(errorCheck) Checking. The values checked are elem and funct.', elem, funct)
+    console.log('(errorCheck) Checking. The values checked are elem and funct.', { elem }, { funct })
+    console.log('(errorCheck) 2nd check for key')
     if (elem === undefined || elem === null) {
-      console.debug('(ErrorCheck) (1/3) Failed. The parameter is listed below.')
-      console.debug('(ErrorCheck) (2/3) elem: ', elem)
-      console.debug('(ErrorCheck) (3/3) funct:', funct)
+      console.log('(ErrorCheck) (1/3) Failed. The parameter is listed below.')
+      console.log('(ErrorCheck) (2/3) elem: ', elem)
+      console.log('(ErrorCheck) (3/3) funct:', funct)
       throw new Error(`(errorCheck)error1: Value is Null/Undefined. Value: ${elem}`)
     }
-    console.debug(`(ErrorCheck) Success with parameter ${funct}`)
+    console.log(`(ErrorCheck) Success with parameter ${funct}`)
   } catch (error) {
-    console.debug(`(ErrorCheck) There was an error: ${error}`)
-    console.debug(error)
+    console.log(`(ErrorCheck) There was an error: ${error}`)
+    console.log(error)
     throw new Error('error22222')
   }
 }
@@ -264,8 +261,11 @@ When calling async functions, they must always be with await. Ex: await scripts.
 
     await page.templateButton().click()
     await waitForExist(page.templateSearchBar)
+    await sleep(1000)
     setFieldValue(page.templateSearchBar, `*${searchTerm}`)
+    await sleep(500)
     await waitForExist(page[`${searchTerm}Template`])
+    await sleep(500)
     await page[`${searchTerm}Template`]().click()
     await waitForExist(page.undoButton)
   }
@@ -283,9 +283,9 @@ When calling async functions, they must always be with await. Ex: await scripts.
   }
 
   static async changeFollowUpTwoDays () {
+    const dateInTwoDays = scripts.datePlusTwoNight()
     await scripts.activateTemplate(incidentPage, '*followUp')
-    const dateInTwoDays = await this.datePlusTwoNight()
-    incidentPage.followUpDateField().value = dateInTwoDays
+    setFieldValue(incidentPage.followUpDateField, dateInTwoDays)
   }
 
   static async savePage (page) {
@@ -346,7 +346,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
     try {
       const arrayOfAssetTagValues = []
       for (const rowWithPersonalComputer of arrayOfRowsWithPersonalComputer) {
-        console.debug('(getAssetTags) Getting row:', rowWithPersonalComputer)
+        console.log('(getAssetTags) Getting row:', rowWithPersonalComputer)
         const cellWithAssetTag = rowWithPersonalComputer.querySelector('td:nth-of-type(3)')
         // const cellWithAssetTag = rowWithPersonalComputer.querySelector('input')
         const assetTagValue = cellWithAssetTag.value
@@ -355,8 +355,8 @@ When calling async functions, they must always be with await. Ex: await scripts.
       const stringOfAssetTagValues = `${arrayOfAssetTagValues}`
       return stringOfAssetTagValues
     } catch (error) {
-      console.debug('(getAssetTags)error: ', error)
-      console.debug('(getAssetTags) No element containing the asset tag was found.')
+      console.log('(getAssetTags)error: ', error)
+      console.log('(getAssetTags) No element containing the asset tag was found.')
       return ('n/a')
     }
   }
@@ -374,35 +374,35 @@ When calling async functions, they must always be with await. Ex: await scripts.
     // get all fields in search information and append them to the list
     const arrayOldSearchPageValues = Object.entries(oldSearchPage)
 
-    console.debug('(oldSearchGetInfo) Beginning waitForExist loop')
+    console.log('(oldSearchGetInfo) Beginning waitForExist loop')
     for (const [key, value] of arrayOldSearchPageValues) {
       if (key === 'assetRows') {
-        console.debug(`(oldSearchGetInfo) Skipping over ${key} as specified in oldSearchGetInfo`)
+        console.log(`(oldSearchGetInfo) Skipping over ${key} as specified in oldSearchGetInfo`)
         break
       }
-      await console.debug(`(oldSearchGetInfo) Checking if exists: ${key}`)
+      await console.log(`(oldSearchGetInfo) Checking if exists: ${key}`)
       await waitForExist(value)
     }
 
-    console.debug('(oldSearchGetInfo) All field elements exist.')
-    console.debug('(oldSearchGetInfo) Now appending element values to array')
+    console.log('(oldSearchGetInfo) All field elements exist.')
+    console.log('(oldSearchGetInfo) Now appending element values to array')
 
     const arrayFieldValues = {}
 
-    console.debug('(oldSearchGetInfo) Beginning append to list loop')
+    console.log('(oldSearchGetInfo) Beginning append to list loop')
     for (const [key, value] of arrayOldSearchPageValues) {
       if (key === 'assetRows') {
-        console.debug(`(oldSearchGetInfo) Not appending and will skip over ${key} as specified in oldSearchGetInfo`)
+        console.log(`(oldSearchGetInfo) Not appending and will skip over ${key} as specified in oldSearchGetInfo`)
         break
       }
-      console.debug(`(oldSearchGetInfo) Pushing into arrayFieldValues array: "${key}" element whose value is`, value().value)
+      console.log(`(oldSearchGetInfo) Pushing into arrayFieldValues array: "${key}" element whose value is`, value().value)
       // arrayFieldValues.push(value().value)
       arrayFieldValues[`${key}`] = value().value
     }
     // appending asset tags to list
     let assetTags = scripts.getAssetTagsOldSearchPage()
     arrayFieldValues['Asset Tag'] = assetTags
-    console.debug(`(oldSearchGetInfo) For the key: "Asset Tag", the value ${assetTags} was pushed.`)
+    console.log(`(oldSearchGetInfo) For the key: "Asset Tag", the value ${assetTags} was pushed.`)
     return arrayFieldValues
   }
 
