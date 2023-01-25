@@ -1,154 +1,6 @@
-function* descend(el, sel, parent) {
-  if (el.matches(sel)) {
-      yield parent ? el.parentElement : el;
-  }
-  if (el.shadowRoot) {
-      for (const child of el.shadowRoot.children) {
-          yield* descend(child, sel, parent);
-      }
-  }
-  for (const child of el.children) {
-      yield* descend(child, sel, parent);
-  }
-};
+const savedStrings = {
 
-function elementValidation(page) {
-  let entries = Object.entries(page)
-  for (const entry of entries) {
-    let key = entry[0]
-    let value = entry[1]
-    try {
-      var valueActive = value()
-    } catch (error) {
-      if (error instanceof TypeError) {
-        valueActive = 'null (Shadow Root)'
-      } else { throw error }
-    }
-    if (valueActive === null) {
-      console.groupCollapsed(`%c${key} was null`, 'color: #27ACEF')
-      console.log(`key: ${key}`)
-      console.log(`value: ${value}`)
-      console.log(`valueActive: ${valueActive}`)
-      console.groupEnd()
-    } else if (valueActive === 'null (Shadow Root)') {
-      console.groupCollapsed(`%c${key} was null (Shadow Root)`, 'color: #E713A3')
-      console.log(`key: ${key}`)
-      console.log(`value: ${value}`)
-      console.log(`valueActive: ${valueActive}`)
-      console.groupEnd()
-    } else if (valueActive === undefined) {
-      console.groupCollapsed(`%c${key} was undefined`, 'color: #A020F0')
-      console.log(`key: ${key}`)
-      console.log(`value: ${value}`)
-      console.log(`valueActive: ${valueActive}`)
-      console.groupEnd()
-    } else if (valueActive === false) {
-      console.groupCollapsed(`%c${key} was false`, 'color: #FF0000')
-      console.log(`key: ${key}`)
-      console.log(`value: ${value}`)
-      console.log(`valueActive: ${valueActive}`)
-      console.groupEnd()
-    } else if (valueActive instanceof Element) {
-      console.groupCollapsed(`%c${key} exists.`, 'color: #168E2F')
-      console.log(`key: ${key}`)
-      console.log(`value: ${value}`)
-      console.log(`valueActive: ${valueActive}`)
-      console.groupEnd()
-    } else {
-      console.groupCollapsed(`%c${key} is unknown??.`, 'color: #FFFF00')
-      console.log(`key: ${key}`)
-      console.log(`value: ${value}`)
-      console.log(`valueActive: ${valueActive}`)
-      console.groupEnd()
-    }
-  }
-}
-
-function setFieldValue(selector, value) {
-  console.log('(setFieldValue fieldElement and value are)', selector, value);
-  selector().focus()
-  selector().select()
-  document.execCommand('insertText', false, value)
-}
-
-function queryCleaner(queryAsString) {
-  // const regex = /(#chrome-tab-panel-record_[\w\d]*)/
-  // const step2 = regex.exec(queryAsString)[0]
-  let final = queryAsString.replace(/(#chrome-tab-panel-record_[\w\d]*)/, "[class='chrome-tab-panel is-active']")
-  console.log(final)
-}
-
-const deepSelectorAll = (node, selector) => {
-  const nodes = [...node.querySelectorAll(selector)]
-  const nodeIterator = document.createNodeIterator(node, Node.ELEMENT_NODE)
-  let currentNode
-  while (currentNode === nodeIterator.nextNode()) {
-    if (currentNode.shadowRoot) {
-      nodes.push(...deepSelectorAll(currentNode.shadowRoot, selector))
-    }
-  }
-  return nodes
-}
-
-function sleep (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-function retry (fn, delay = 200, retries = 5, err = null) {
-  if (!retries) {
-    console.log(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`)
-    return Promise.reject(err)
-  }
-  return fn().catch(async err => {
-    console.log(`(Retry Function) Tries remaining: ${retries}`)
-    console.log('(Retry Function) Rejected. Retrying if there are tries remaining.')
-    if (delay !== 0) {
-      if (retries === 1) {
-        delay += 2000
-        console.log('(Retry Function)Last retry, sleeping for 5000 ms longer than initial delay')
-      }
-      if (retries === 2) {
-        delay += 2000
-        console.log('(Retry Function)4th retry, sleeping for 3000 ms longer than initial delay')
-      }
-      if (retries === 3) {
-        delay += 500
-        console.log('(Retry Function) 3rd retry, sleeping for 1000 ms longer than initial delay')
-      }
-      if (retries === 4) {
-        delay += 500
-        console.log('(Retry Function) 2nd retry, sleeping for 500 ms longer than initial delay')
-      }
-      if (retries === 5) {
-        console.log('(Retry Function) 1st retry, sleeping for specified delay.')
-      }
-      console.log(`(Retry Function) Sleeping for ${delay} ms...`)
-      await sleep(delay)
-      console.log('(Retry Function) Done sleeping.')
-    }
-    return retry(fn, delay, (retries - 1), err)
-  })
-}
-async function errorCheck (funct) {
-  try {
-    const elem = funct()
-    console.log('(errorCheck) Checking. The values checked are elem and funct.', { elem }, { funct })
-    console.log('(errorCheck) 2nd check for key')
-    if (elem === undefined || elem === null) {
-      console.log('(ErrorCheck) (1/3) Failed. The parameter is listed below.')
-      console.log('(ErrorCheck) (2/3) elem: ', elem)
-      console.log('(ErrorCheck) (3/3) funct:', funct)
-      throw new Error(`(errorCheck)error1: Value is Null/Undefined. Value: ${elem}`)
-    }
-    console.log(`(ErrorCheck) Success with parameter ${funct}`)
-  } catch (error) {
-    console.log(`(ErrorCheck) There was an error: ${error}`)
-    console.log(error)
-    throw new Error('error22222')
-  }
-}
-async function waitForExist (funct) {
-  await retry(() => errorCheck(funct))
+  accountLockedString: ''
 }
 
 class csPage {
@@ -164,11 +16,6 @@ class csPage {
   static descriptionBox = () => {}
   static shortDescriptionField = () => {}
   static workNotesBox = () => {}
-}
-
-const savedStrings = {
-
-  accountLockedString: ''
 }
 
 class incidentPage {
@@ -205,6 +52,7 @@ class incidentPage {
 class emailPage {
   static toField = () => {}
   static ccField = () => {}
+  static subjectField = () => {}
   static textField = () => {}
   static sendButton = () => {}
   static redErrorBanner = () => {}
@@ -225,32 +73,31 @@ class oldEmailPage {
 }
 
 const oldSearchPage = {
-  // searchBar: () => document.querySelector('input'),
-  // searchButton: () => document.querySelector('input'),
+  searchBar: () => document.querySelector('input'),
+  searchButton: () => document.querySelector('input'),
 
-  // userIDField: () => document.querySelector('input'),
-  // firstNameField: () => document.querySelector('input'),
-  // lastNameField: () => document.querySelector('input'),
-  // locationField: () => document.querySelector('input'),
-  // cityField: () => document.querySelector('input'),
-  // zipCodeField: () => document.querySelector('input'),
-  // streetField: () => document.querySelector('input'),
-  // desklocationField: () => document.querySelector('input'),
+  userIDField: () => document.querySelector('input'),
+  firstNameField: () => document.querySelector('input'),
+  lastNameField: () => document.querySelector('input'),
+  locationField: () => document.querySelector('input'),
+  cityField: () => document.querySelector('input'),
+  zipCodeField: () => document.querySelector('input'),
+  streetField: () => document.querySelector('input'),
+  desklocationField: () => document.querySelector('input'),
 
-  // emailField: () => document.querySelector('input'),
-  // businessPhoneField: () => document.querySelector('input'),
-  // mobilePhoneField: () => document.querySelector('input'),
-  // euaDeptField: () => document.querySelector('input'),
-  // isContractorSelectionBox: () => document.querySelector('input'),
+  emailField: () => document.querySelector('input'),
+  businessPhoneField: () => document.querySelector('input'),
+  mobilePhoneField: () => document.querySelector('input'),
+  euaDeptField: () => document.querySelector('input'),
+  isContractorSelectionBox: () => document.querySelector('input'),
 
   // This is not an element. This is an array of row elements containing text Personal Computer in the Model Category column.
   assetRows: () => {}
 
 }
+
+// =======================================================================================
 class scripts {
-/*
-When calling async functions, they must always be with await. Ex: await scripts.accountLocked()
-*/
 
   // main scripts
   static async accountLocked () {
@@ -382,7 +229,7 @@ When calling async functions, they must always be with await. Ex: await scripts.
     setFieldValue(page.toField(), arrayEmail.sender)
     setFieldValue(page.ccField(), arrayEmail.sender)
     textBr = text.replaceAll('\n', '<br>')
-    page.textField().innerHTML = textBr
+    page.textField().innerHTML = scripts.convertToHtml(savedStrings.accountLockedString)
     await sleep(500) // optional
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
   }
@@ -479,8 +326,160 @@ When calling async functions, they must always be with await. Ex: await scripts.
     return arrayFieldValues
   }
 
+  static convertToHtml(string) {
+    string.replace('\n', '<br>')
+  }
 }
 
+function* descend(el, sel, parent) {
+  if (el.matches(sel)) {
+      yield parent ? el.parentElement : el;
+  }
+  if (el.shadowRoot) {
+      for (const child of el.shadowRoot.children) {
+          yield* descend(child, sel, parent);
+      }
+  }
+  for (const child of el.children) {
+      yield* descend(child, sel, parent);
+  }
+};
 
+function elementValidation(page) {
+  let entries = Object.entries(page)
+  for (const entry of entries) {
+    let key = entry[0]
+    let value = entry[1]
+    try {
+      var valueActive = value()
+    } catch (error) {
+      if (error instanceof TypeError) {
+        valueActive = 'null (Shadow Root)'
+      } else { throw error }
+    }
+    if (valueActive === null) {
+      console.groupCollapsed(`%c${key} was null`, 'color: #27ACEF')
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else if (valueActive === 'null (Shadow Root)') {
+      console.groupCollapsed(`%c${key} was null (Shadow Root)`, 'color: #E713A3')
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else if (valueActive === undefined) {
+      console.groupCollapsed(`%c${key} was undefined`, 'color: #A020F0')
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else if (valueActive === false) {
+      console.groupCollapsed(`%c${key} was false`, 'color: #FF0000')
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else if (valueActive instanceof Element) {
+      console.groupCollapsed(`%c${key} exists.`, 'color: #168E2F')
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    } else {
+      console.groupCollapsed(`%c${key} is unknown??.`, 'color: #FFA500')
+      console.log(`key: ${key}`)
+      console.log(`value: ${value}`)
+      console.log(`valueActive: ${valueActive}`)
+      console.groupEnd()
+    }
+  }
+}
 
-elementValidation(incidentPage)
+function setFieldValue(selector, value) {
+  console.log('(setFieldValue fieldElement and value are)', selector, value);
+  selector().focus()
+  selector().select()
+  document.execCommand('insertText', false, value)
+}
+
+function queryCleaner(queryAsString) {
+  // const regex = /(#chrome-tab-panel-record_[\w\d]*)/
+  // const step2 = regex.exec(queryAsString)[0]
+  let final = queryAsString.replace(/(#chrome-tab-panel-record_[\w\d]*)/, "[class='chrome-tab-panel is-active']")
+  console.log(final)
+}
+
+const deepSelectorAll = (node, selector) => {
+  const nodes = [...node.querySelectorAll(selector)]
+  const nodeIterator = document.createNodeIterator(node, Node.ELEMENT_NODE)
+  let currentNode
+  while (currentNode === nodeIterator.nextNode()) {
+    if (currentNode.shadowRoot) {
+      nodes.push(...deepSelectorAll(currentNode.shadowRoot, selector))
+    }
+  }
+  return nodes
+}
+
+function sleep (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+function retry (fn, delay = 200, retries = 5, err = null) {
+  if (!retries) {
+    console.log(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`)
+    return Promise.reject(err)
+  }
+  return fn().catch(async err => {
+    console.log(`(Retry Function) Tries remaining: ${retries}`)
+    console.log('(Retry Function) Rejected. Retrying if there are tries remaining.')
+    if (delay !== 0) {
+      if (retries === 1) {
+        delay += 2000
+        console.log('(Retry Function)Last retry, sleeping for 5000 ms longer than initial delay')
+      }
+      if (retries === 2) {
+        delay += 2000
+        console.log('(Retry Function)4th retry, sleeping for 3000 ms longer than initial delay')
+      }
+      if (retries === 3) {
+        delay += 500
+        console.log('(Retry Function) 3rd retry, sleeping for 1000 ms longer than initial delay')
+      }
+      if (retries === 4) {
+        delay += 500
+        console.log('(Retry Function) 2nd retry, sleeping for 500 ms longer than initial delay')
+      }
+      if (retries === 5) {
+        console.log('(Retry Function) 1st retry, sleeping for specified delay.')
+      }
+      console.log(`(Retry Function) Sleeping for ${delay} ms...`)
+      await sleep(delay)
+      console.log('(Retry Function) Done sleeping.')
+    }
+    return retry(fn, delay, (retries - 1), err)
+  })
+}
+async function errorCheck (funct) {
+  try {
+    const elem = funct()
+    console.log('(errorCheck) Checking. The values checked are elem and funct.', { elem }, { funct })
+    console.log('(errorCheck) 2nd check for key')
+    if (elem === undefined || elem === null) {
+      console.log('(ErrorCheck) (1/3) Failed. The parameter is listed below.')
+      console.log('(ErrorCheck) (2/3) elem: ', elem)
+      console.log('(ErrorCheck) (3/3) funct:', funct)
+      throw new Error(`(errorCheck)error1: Value is Null/Undefined. Value: ${elem}`)
+    }
+    console.log(`(ErrorCheck) Success with parameter ${funct}`)
+  } catch (error) {
+    console.log(`(ErrorCheck) There was an error: ${error}`)
+    console.log(error)
+    throw new Error('error22222')
+  }
+}
+async function waitForExist (funct) {
+  await retry(() => errorCheck(funct))
+}
