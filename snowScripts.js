@@ -276,8 +276,8 @@ class scripts {
     // page.ccField().value = arrayEmail.CC
     // page.textField().innerHTML = text
     await sleep(3000);
-    setFieldValue(page.toField, arrayEmail.sender, emailPage.emailDocument);
-    setFieldValue(page.ccField, arrayEmail.sender, emailPage.emailDocument);
+    setEmailFieldValue(page.toField, arrayEmail.sender, emailPage.emailDocument);
+    setEmailFieldValue(page.ccField, arrayEmail.sender, emailPage.emailDocument);
     page.textField().innerHTML = textBr;
     await sleep(500); // optional
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
