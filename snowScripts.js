@@ -231,8 +231,8 @@ class scripts {
   static async() {}
 
   static regexPrinters(input) {
-    const regexSubject = /LEXMARK\s+\S+/g;
-    const arrayMatches = regexSubject.exec(input)
+    const regexPattern = /LEXMARK\s+\S+/g;
+    const arrayMatches = input.match(regexPattern)
     return arrayMatches;
   }
 
