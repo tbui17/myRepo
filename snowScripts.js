@@ -558,6 +558,7 @@ function retry(fn, delay = 200, retries = 5, err = null) {
 }
 async function errorCheck(funct) {
   try {
+    console.log(funct)
     const elem = funct();
     console.log(
       "(errorCheck) Checking. The values checked are elem and funct.",
@@ -575,11 +576,7 @@ async function errorCheck(funct) {
     }
     console.log('(ErrorCheck) Success with parameter elem / funct: ', elem, funct);
   } catch (error) {
-    console.group('(ErrorCheck) There was an error:', error);
-    console.log('elem: ', elem)
-    console.log('func: ', funct)
-    console.log('error', error);
-    console.groupEnd()
+    console.log(`(ErrorCheck) There was an error: ${error}`);
     throw new Error("error22222");
   }
 }
