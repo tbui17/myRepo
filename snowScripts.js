@@ -90,6 +90,7 @@ const oldSearchPage = {
   lastNameField: () => document.querySelector("input"),
   locationField: () => document.querySelector("input"),
   cityField: () => document.querySelector("input"),
+  stateField: () => document.querySelector("input"),
   zipCodeField: () => document.querySelector("input"),
   streetField: () => document.querySelector("input"),
   desklocationField: () => document.querySelector("input"),
@@ -159,6 +160,7 @@ class scripts {
     await waitForExist(csPage.acceptButton);
     await csPage.acceptButton().click();
     await scripts.activateTemplate(csPage, "notificationMail");
+    await csPage.proposeSolutionsButton().click()
   }
   // mini scripts
 
@@ -226,8 +228,9 @@ class scripts {
     await sleep(500);
     await waitForExist(page[`${searchTerm}Template`]);
     await sleep(500);
-    await page[`${searchTerm}Template`]().click();
+    await page.firstTemplate().click();
     await waitForExist(page.undoButton);
+    await sleep(500)
   }
 
   static async getDescriptionText(page) {
