@@ -208,12 +208,14 @@ class scripts {
     const arrayMatches = scripts.regexEmail(descContent)
     const arrayTicketNumbers = []
     for (const match in arrayMatches) {
-      await waitForExist(oldIncPage.templateButton)
+      await waitForExist(oldIncPage.printers2Template)
       await sleep(500)
       let ticketNumber = oldIncPage.ticketNumber().value
       console.debug(`ticketNumber is ${ticketNumber}`)
       arrayTicketNumbers.push(ticketNumber)
-      await scripts.activateTemplate(oldIncPage, "printers2")
+      await printers2Template().click()
+      await waitForExist(oldIncPage.alertWindow)
+      await sleep(1000)
       oldIncPage.setEmailFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`, oldIncPage.iframe)
       oldIncPage.setEmailFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`, oldIncPage.iframe)
       await sleep(500)
@@ -293,25 +295,14 @@ class scripts {
     await waitForExist(page.templateButton);
     await page.templateButton().click();
     await waitForExist(page.templateSearchBar);
-    if (page === oldIncPage) {
-      await sleep(1000);
-      setEmailFieldValue(page.templateSearchBar, `*${searchTerm}`, oldIncPage.iframe);
-      await sleep(500);
-      await waitForExist(page.printers2Template);
-      await sleep(500);
-      await page.printers2Template().click();
-      await waitForExist(page.windowAlert);
-      await sleep(500)
-    } else {
-      await sleep(1000);
-      setEmailFieldValue(page.templateSearchBar, `*${searchTerm}`, oldIncPage.iframe);
-      await sleep(500);
-      await waitForExist(page.firstTemplate);
-      await sleep(500);
-      await page.firstTemplate().click();
-      await waitForExist(page.undoButton);
-      await sleep(500)
-    }
+    await sleep(1000);
+    setEmailFieldValue(page.templateSearchBar, `*${searchTerm}`, oldIncPage.iframe);
+    await sleep(500);
+    await waitForExist(page.firstTemplate);
+    await sleep(500);
+    await page.firstTemplate().click();
+    await waitForExist(page.undoButton);
+    await sleep(500)
   }
 
   static async getDescriptionText(page) {
