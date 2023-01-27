@@ -114,6 +114,8 @@ const oldIncPage = {
   templateButton: () => {},
   templateSearchBar: () => {},
   printers2Template: () => {},
+  createSecurityIncidentButton: () => {},
+
 
   alertWindow: () => {},
 }
