@@ -514,12 +514,9 @@ function retry(fn, delay = 200, retries = 5, err = null) {
     console.log(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`);
     return Promise.reject(err);
   }
-  console.group(`Beginning try for ${fn}`)
+  console.log(`Beginning try for ${fn}`)
   return fn().catch(async (err) => {
-    console.log(`(Retry Function) Tries remaining: ${retries}`);
-    console.log(
-      "(Retry Function) Rejected. Retrying if there are tries remaining."
-    );
+    console.groupCollapsed(`(Retry Function) Failed. Tries remaining: ${retries}`);
     if (delay !== 0) {
       if (retries === 1) {
         delay += 2000;
