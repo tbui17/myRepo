@@ -293,10 +293,10 @@ class scripts {
     await waitForExist(page.templateButton);
     await page.templateButton().click();
     await waitForExist(page.templateSearchBar);
-    await sleep(1000);
-    setFieldValue(page.templateSearchBar, `*${searchTerm}`);
-    await sleep(500);
     if (page === oldIncPage) {
+      await sleep(1000);
+      setEmailFieldValue(page.templateSearchBar, `*${searchTerm}`, oldIncPage.iframe);
+      await sleep(500);
       await waitForExist(page.printers2Template);
       await sleep(500);
       await page.printers2Template().click();
