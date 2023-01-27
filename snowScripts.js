@@ -1,4 +1,4 @@
-// @ts-nocheck
+
 const savedStrings = {
   accountLockedString: "",
   deskEmail: "",
@@ -213,7 +213,7 @@ class scripts {
       let ticketNumber = oldIncPage.ticketNumber().value
       console.debug(`ticketNumber is ${ticketNumber}`)
       arrayTicketNumbers.push(ticketNumber)
-      await printers2Template().click()
+      await oldIncPage.printers2Template().click()
       await waitForExist(oldIncPage.alertWindow)
       await sleep(1000)
       oldIncPage.setEmailFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`, oldIncPage.iframe)
