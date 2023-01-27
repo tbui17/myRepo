@@ -469,15 +469,18 @@ function elementValidation(page) {
   }
 }
 
-function setFieldValue(selector, value, parentDocumentSelector = 222) {
+function setFieldValue(selector, value) {
   console.log("(setFieldValue fieldElement and value are)", selector, value);
   selector().focus();
   selector().select();
-  if (parentDocumentSelector() !== 222) {
-    parentDocumentSelector().execCommand("insertText", false, value);
-  } else {
-    document.execCommand("insertText", false, value);
-  }
+  document.execCommand("insertText", false, value);
+}
+
+function emailSetFieldValue(selector, value, parentDocumentSelector) {
+  console.log("(setFieldValue fieldElement and value are)", selector, value);
+  selector().focus();
+  selector().select();
+  parentDocumentSelector().execCommand("insertText", false, value);
 }
 
 function queryCleaner(queryAsString) {
