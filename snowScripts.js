@@ -205,9 +205,10 @@ class scripts {
   
   
   static async printers(supportCenter, descContent){
-    const arrayMatches = scripts.regexEmail(descContent)
+    const arrayMatches = scripts.regexPrinters(descContent)
     const arrayTicketNumbers = []
-    for (const match in arrayMatches) {
+    for (let index = 0; index < arrayMatches.length; index++) {
+      const match = arrayMatches[0]
       await waitForExist(oldIncPage.printers2Template)
       await sleep(500)
       let ticketNumber = oldIncPage.ticketNumber().value
@@ -216,9 +217,9 @@ class scripts {
       await oldIncPage.printers2Template().click()
       await waitForExist(oldIncPage.alertWindow)
       await sleep(1000)
-      oldIncPage.setEmailFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`, oldIncPage.iframe)
-      oldIncPage.setEmailFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`, oldIncPage.iframe)
-      await sleep(500)
+      setEmailFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`, oldIncPage.iframe)
+      setEmailFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`, oldIncPage.iframe)
+      await sleep(6000)
       await scripts.savePage(oldIncPage)
       await waitForExist(oldIncPage.createSecurityIncidentButton)
       await sleep(500)
