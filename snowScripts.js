@@ -514,6 +514,7 @@ function retry(fn, delay = 200, retries = 5, err = null) {
     console.log(`(Retry Function) Failed. Out of tries. Parameter was ${fn}`);
     return Promise.reject(err);
   }
+  console.group(`Beginning try for ${fn}`)
   return fn().catch(async (err) => {
     console.log(`(Retry Function) Tries remaining: ${retries}`);
     console.log(
@@ -553,31 +554,32 @@ function retry(fn, delay = 200, retries = 5, err = null) {
       await sleep(delay);
       console.log("(Retry Function) Done sleeping.");
     }
+    console.groupEnd()
     return retry(fn, delay, retries - 1, err);
   });
 }
 async function errorCheck(funct) {
   try {
-    console.log()
+    console.log(`(errorCheck) 1st check. The key for funct is ${funct.name}. Will now perform const elem = funct().`)
     const elem = funct();
     console.log(
-      "(errorCheck) Checking. The values checked are elem and funct.",
+      "(errorCheck) funct() works. The values of elem and funct are:",
       { elem },
       { funct }
     );
-    console.log("(errorCheck) 2nd check for key");
+    console.log("(errorCheck) 2nd check for elem === null or undefined.");
     if (elem === undefined || elem === null) {
       console.log("(ErrorCheck) (1/3) Failed. The parameter is listed below.");
       console.log("(ErrorCheck) (2/3) elem: ", elem);
       console.log("(ErrorCheck) (3/3) funct:", funct);
       throw new Error(
-        `(errorCheck)error1: Value is Null/Undefined. Value: ${elem}`
+        `(errorCheck) The elem is Null/Undefined. The elem is: ${elem}`
       );
     }
-    console.log('(ErrorCheck) Success with parameter elem / funct: ', elem, funct);
+    console.log('(ErrorCheck) Success, elem and funct are: ', elem, funct);
   } catch (error) {
-    console.log(`(ErrorCheck) There was an error: ${error}`);
-    throw new Error("error22222");
+    console.log(`(ErrorCheck) There was an error, which is: ${error}`);
+    throw new Error("");
   }
 }
 async function waitForExist(funct) {
