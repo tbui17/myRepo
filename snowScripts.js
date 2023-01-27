@@ -215,7 +215,7 @@ class scripts {
       arrayTicketNumbers.push(ticketNumber)
       await scripts.activateTemplate(oldIncPage, "printers2")
       setFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`)
-      setFieldValue(oldIncPage.assignmentGroup, `${match} is now Stale`)
+      setFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`)
       await sleep(500)
       await scripts.savePage(oldIncPage)
       await waitForExist(oldIncPage.createSecurityIncidentButton)
