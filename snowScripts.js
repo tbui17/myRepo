@@ -226,7 +226,7 @@ class scripts {
     await sleep(1000);
     setFieldValue(page.templateSearchBar, `*${searchTerm}`);
     await sleep(500);
-    await waitForExist(page[`${searchTerm}Template`]);
+    await waitForExist(page.firstTemplate);
     await sleep(500);
     await page.firstTemplate().click();
     await waitForExist(page.undoButton);
@@ -558,7 +558,7 @@ function retry(fn, delay = 200, retries = 5, err = null) {
 }
 async function errorCheck(funct) {
   try {
-    console.log(funct)
+    console.log()
     const elem = funct();
     console.log(
       "(errorCheck) Checking. The values checked are elem and funct.",
@@ -583,5 +583,3 @@ async function errorCheck(funct) {
 async function waitForExist(funct) {
   await retry(() => errorCheck(funct));
 }
-
-console.log("Add the desk email and add the firstTemplate to pages.");
