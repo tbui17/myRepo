@@ -573,10 +573,13 @@ async function errorCheck(funct) {
         `(errorCheck)error1: Value is Null/Undefined. Value: ${elem}`
       );
     }
-    console.log(`(ErrorCheck) Success with parameter ${funct}`);
+    console.log('(ErrorCheck) Success with parameter elem / funct: ', elem, funct);
   } catch (error) {
-    console.log(`(ErrorCheck) There was an error: ${error}`);
-    console.log(error);
+    console.group('(ErrorCheck) There was an error:', error);
+    console.log('elem: ', elem)
+    console.log('func: ', funct)
+    console.log('error', error);
+    console.groupEnd()
     throw new Error("error22222");
   }
 }
