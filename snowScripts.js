@@ -204,18 +204,18 @@ class scripts {
 
   
   
-  static async printers(descContent, supportCenter){
+  static async printers(supportCenter, descContent){
     const arrayMatches = scripts.regexEmail(descContent)
     const arrayTicketNumbers = []
-    for (const match of arrayMatches) {
+    for (const match in arrayMatches) {
       await waitForExist(oldIncPage.templateButton)
       await sleep(500)
       let ticketNumber = oldIncPage.ticketNumber().value
       console.debug(`ticketNumber is ${ticketNumber}`)
       arrayTicketNumbers.push(ticketNumber)
       await scripts.activateTemplate(oldIncPage, "printers2")
-      setFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`)
-      setFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`)
+      oldIncPage.setEmailFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`)
+      oldIncPage.setEmailFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`)
       await sleep(500)
       await scripts.savePage(oldIncPage)
       await waitForExist(oldIncPage.createSecurityIncidentButton)
@@ -303,6 +303,9 @@ class scripts {
       await waitForExist(page.windowAlert);
       await sleep(500)
     } else {
+      await sleep(1000);
+      setEmailFieldValue(page.templateSearchBar, `*${searchTerm}`, oldIncPage.iframe);
+      await sleep(500);
       await waitForExist(page.firstTemplate);
       await sleep(500);
       await page.firstTemplate().click();
@@ -552,13 +555,19 @@ function setFieldValue(selector, value) {
   selector().focus();
   selector().select();
   document.execCommand("insertText", false, value);
+  if (selector().value != value) {
+    console.log('Field did not change. Is the content in an iframe?')
+  }
 }
 
-function emailSetFieldValue(selector, value, parentDocumentSelector) {
+function setEmailFieldValue(selector, value, parentDocumentSelector) {
   console.debug("(setFieldValue fieldElement and value are)", selector, value);
   selector().focus();
   selector().select();
   parentDocumentSelector().execCommand("insertText", false, value);
+  if (selector().value != value) {
+    console.log('Field did not change. Did you choose the right parent document?')
+  }
 }
 
 function queryCleaner(queryAsString) {
