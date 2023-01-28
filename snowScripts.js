@@ -20,6 +20,10 @@ class csPage {
   static undoButton = () => {};
   static firstTemplate = ()=>{};
 
+  static kbaSearchBar = () =>{};
+  static firstKbaCard = ()=>{};
+
+
   static descriptionBox = () => {};
   static shortDescriptionField = () => {};
   static workNotesBox = () => {};
@@ -40,12 +44,13 @@ class incidentPage {
   static composeEmailButton = () => {};
 
   // may be prone to breaking if search results return more than one template
+  static templatesTable = () => {}
   static templateButton = () => {};
   static templateSearchBar = () => {};
   static undoButton = () => {};
   static firstTemplate = ()=>{};
 
-  static accountLockedTemplate = () => {};
+  static accountLockedTemplate = () => searchDictCardHeader(this, 'accountLocked')
   static categoriesTemplate = () => {};
   static emailsTemplate = () => {};
   static followUpTemplate = () => {};
@@ -75,6 +80,11 @@ class emailPage {
   static redErrorBanner = () => {};
 }
 class securityIncidentPage {}
+
+class requestPage {
+  constructor()
+
+}
 
 class oldCsPage {}
 
@@ -221,12 +231,13 @@ class scripts {
       await sleep(1000)
       setEmailFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`, oldIncPage.iframe)
       setEmailFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`, oldIncPage.iframe)
-      await sleep(6000)
       await scripts.savePage(oldIncPage)
+      await sleep(6000)
       await waitForExist(oldIncPage.createSecurityIncidentButton)
       await sleep(500)
       await waitForExist(oldIncPage.createIncidentButton)
       await oldIncPage.createIncidentButton().click()
+      await sleep(3000)
     }
     console.log('Complete. Ticket numbers below.')
     console.log(`${arrayTicketNumbers}`)
@@ -283,8 +294,7 @@ class scripts {
   static async acceptThenCreateIncTicket() {
     // create the incident ticket
 
-    await csPage.acceptButton().click();
-    await waitForExist(csPage.proposeSolutionsButton);
+    await scripts.getDescDetailsAndClickAcceptCsPage()
     await csPage.moreActionsButton().click();
     await waitForExist(csPage.createIncidentButton);
     await csPage.createIncidentButton.click();
@@ -414,12 +424,12 @@ class scripts {
 
   static async locateClickUser() {
     // locate entry for user on old search page and click button to navigate to profile. Must have email address already in search bar.
-    await waitForExist(oldSearchPage.searchBar);
-    const emailAddress = oldSearchPage.searchBar().value;
-    const buttonOnPage = () =>
-      $x(`//div[@class="user-left"][..//ul/li[text()="${emailAddress}"]]`);
-    await waitForExist(buttonOnPage);
-    await buttonOnPage().click();
+    // await waitForExist(oldSearchPage.searchBar);
+    // const emailAddress = oldSearchPage.searchBar().value;
+    // const buttonOnPage = () =>
+    // $x(`//div[@class="user-left"][..//ul/li[text()="${emailAddress}"]]`); // this does not work, xpath does not work properly
+    // await waitForExist(buttonOnPage);
+    // await buttonOnPage().click();
   }
 
   static async oldSearchGetInfo() {
@@ -470,6 +480,36 @@ class scripts {
   static convertToHtml(string) {
     const res = string.replace("\n", "<br>");
     return res;
+  }
+
+  static showScripts() {
+   console.log (Object.keys(scripts))
+  }
+  
+  static async getDescDetailsAndClickAcceptCsPage () {
+    await csPage.acceptButton().click();
+    await waitForExist(csPage.proposeSolutionsButton);
+  }
+
+  
+  
+  static async searchForRequestItemAndClick(page, searchTerm){
+    await waitForExist(page.kbaSearchBar);
+    await sleep(1000)
+    setFieldValue(page.kbaSearchBar, searchTerm)
+    await waitForExist(page.firstKbaCard)
+    await sleep(2000)
+    await waitForExist(page.submitRequestButton)
+    await sleep(1000)
+    await page.submitRequestButton().click()
+    await sleep(6000)
+    await waitForExist()
+  }
+
+  
+  
+  static async (){
+  
   }
 }
 
@@ -663,3 +703,28 @@ async function errorCheck(funct) {
 async function waitForExist(funct) {
   await retry(() => errorCheck(funct));
 }
+function getCardHeaders(page) {
+  const templatesTable = page.templatesTable()
+  const arrayCards = templatesTable.querySelectorAll('now-template-card-attachment')
+  let dictCardHeader = {}
+  for (let index = 0; index < arrayCards.length; index++) {
+    const card = arrayCards[index];
+    const cardHeader = card.shadowRoot.querySelector('now-card-header').shadowRoot.querySelector("h2")
+    const cardHeaderTitle = cardHeader.title
+    dictCardHeader[`${cardHeaderTitle}`] = cardHeader
+  }
+  return dictCardHeader
+}
+function searchDictCardHeader (page, term, asteriskCount=1) {
+  let dictCardHeader = getCardHeaders(page)
+  let ast = '*'.repeat(asteriskCount)
+  try {
+    let result = dictCardHeader[`${ast}${term}`]
+  return result
+  } catch (error) {
+    console.warn(`Did not find the term: ${term} in dictionary with asteriskCount = ${asteriskCount}. Returning null.`)
+    return null
+  }
+}
+
+console.log("add the new template entries in incident page, see new csPage, new req page, also see oneNote for details")
