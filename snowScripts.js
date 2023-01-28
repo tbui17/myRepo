@@ -210,7 +210,9 @@ class scripts {
   static async notificationMail() {
     await waitForExist(csPage.acceptButton);
     await csPage.acceptButton().click();
+    await waitForExist(csPage.proposeSolutionsButton)
     await scripts.activateTemplate(csPage, "notificationMail");
+    await sleep (3000)
     await waitForExist(csPage.proposeSolutionsButton)
     await sleep(1000)
     await csPage.proposeSolutionsButton().click()
