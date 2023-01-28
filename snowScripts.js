@@ -162,7 +162,7 @@ class scripts {
   static async accountLocked() {
     // Accept, create INC, use account locked template, save page, open and send mail,
     const arrayEmail = await scripts.getDescriptionText(csPage);
-    await scripts.acceptThenCreateIncTicket();
+    await scripts.createIncTicket();
     await scripts.activateTemplate(incidentPage, "accountLocked");
     await scripts.changeFollowUpTwoDays();
     await scripts.openMail(incidentPage);
@@ -295,12 +295,12 @@ class scripts {
     return arrayEmail;
   }
 
-  static async acceptThenCreateIncTicket() {
+  static async createIncTicket() {
     // create the incident ticket
 
-    await scripts.getDescDetailsAndClickAcceptCsPage()
     await csPage.moreActionsButton().click();
     await waitForExist(csPage.createIncidentButton);
+    await sleep(200)
     await csPage.createIncidentButton.click();
     await waitForExist(incidentPage.templateButton);
   }
@@ -489,7 +489,7 @@ class scripts {
    console.log (Object.keys(scripts))
   }
   
-  static async getDescDetailsAndClickAcceptCsPage () {
+  static async acceptCsPage () {
     await csPage.acceptButton().click();
     await waitForExist(csPage.proposeSolutionsButton);
   }
