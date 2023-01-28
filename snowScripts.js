@@ -309,10 +309,9 @@ class scripts {
     await page.templateButton().click();
     await waitForExist(page.templateSearchBar);
     await sleep(1000);
-    setEmailFieldValue(page.templateSearchBar, `*${searchTerm}`, oldIncPage.iframe);
-    await sleep(500);
+    setFieldValue(page.templateSearchBar, `*${searchTerm}`)
     await waitForExist(page.firstTemplate);
-    await sleep(500);
+    await sleep(1000);
     await page.firstTemplate().click();
     await waitForExist(page.undoButton);
     await sleep(500)
