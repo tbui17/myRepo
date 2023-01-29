@@ -248,8 +248,6 @@ class scripts {
   }
   // mini scripts
 
-  static async() {}
-
   static regexPrinters(input) {
     const regexPattern = /LEXMARK\s+\S+/g;
     const arrayMatches = input.match(regexPattern)
