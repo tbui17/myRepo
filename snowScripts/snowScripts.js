@@ -82,7 +82,7 @@ class emailPage {
 class securityIncidentPage {}
 
 class requestPage {
-  constructor()
+  // constructor()
 
 }
 

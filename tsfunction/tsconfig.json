@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-      "module": "CommonJS",
-      "sourceMap": true,
-      "lib": ["DOM", "ESNext"],
-      "target": "ES2017",
-      "watch": true
-    }
-  }
