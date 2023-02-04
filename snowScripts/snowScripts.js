@@ -272,18 +272,17 @@ class mainScripts{
     } else {throw new Error('Invalid mac or ad hoc entry')}
     let arrayEmail = scripts.getDescriptionText(csPage)
     await scripts.createIncTicket()
-    
     await scripts.activateTemplateAndValidateCallerField(incidentPage, `${macOrAdhocSearchTerm}`)
-    let newDesc = `${savedStrings.sirShortDescBefore} + ${orgName} + ${savedStrings.sirShortDescAfter}`
-    setFieldValue(incidentPage, newDesc)
+    let newDesc = `${savedStrings.sirShortDescBefore} ${orgName} ${sirShortDescAfter}`
+    setFieldValue(incidentPage.shortDescriptionField, newDesc)
     await sleep(1000)
-    aclick(incidentPage.createSecurityIncidentButton)
+    await aclick(incidentPage.createSecurityIncidentButton)
     await sleep(6000)
     await waitForExist(securityIncidentPage.templateButton)
     await sleep(1000)
     await aclick(securityIncidentPage.templateButton)
     await sleep(5000)
-    let sirTicketNumber = `${securityIncidentPage.ticketNumber}`
+    let sirTicketNumber = `${securityIncidentPage.ticketNumber().value()}`
     if (macOrAdhoc === 1) {
       aclick(securityIncidentPage.macTemplate)
     } else if (macOrAdhoc === 2) {
@@ -295,8 +294,8 @@ class mainScripts{
     await sleep (8000)
     aclick(securityIncidentPage.closeButton)
     await sleep(2000)
-    scripts.openMail(incidentPage)
-    scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString) // check sirString in savedStrings
+    await scripts.openMail(incidentPage)
+    await scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString) // check sirString in savedStrings
     // scripts.savePage(incidentPage) // double check first everything else is functional
   }
 }
@@ -409,9 +408,11 @@ class scripts {
   static async openMail(page) {
     // open email page from the page you were on
     await page.moreActionsButton().click();
-    await waitForExist(page.composeEmail);
     await sleep(200)
-    await page.composeEmail().click();
+    await waitForExist(page.composeEmailButton);
+    await page.composeEmailButton().click();
+    await sleep(5000)
+    await waitForExist(emailPage.textField)
   }
 
   static async sendMail(page, arrayEmail, text) {
