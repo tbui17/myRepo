@@ -87,6 +87,7 @@ class securityIncidentPage {
   static templateSearchBar = () => {};
   static macTemplate = ()=>{}
   static adhocTemplate = () => {}
+  static undoButton = () => {};
 
   static ticketNumber = () => {}
 
@@ -344,9 +345,9 @@ class scripts {
     // create the incident ticket
 
     await csPage.moreActionsButton().click();
-    await waitForExist(csPage.createIncidentButton);
     await sleep(200)
-    await csPage.createIncidentButton.click();
+    await waitForExist(csPage.createIncidentButton);
+    await csPage.createIncidentButton().click();
     await sleep(6000)
     await waitForExist(incidentPage.templateButton);
   }
@@ -795,6 +796,7 @@ async function errorCheck(funct) {
   }
 }
 async function waitForExist(funct) {
+  console.debug((`(waitForExist) The funct is ${funct}`))
   await retry(() => errorCheck(funct));
 }
 function getCardHeaders(page) {
