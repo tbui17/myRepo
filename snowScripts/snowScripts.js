@@ -3,6 +3,8 @@ const savedStrings = {
   accountLockedString: "",
   deskEmailString: "",
   sirString: "",
+  sirShortDescBefore: "",
+  sirShortDescAfter: "",
 };
 
 class csPage {
@@ -267,7 +269,7 @@ class mainScripts{
     let arrayEmail = scripts.getDescriptionText(csPage)
     await scripts.createIncTicket()
     await scripts.activateTemplateAndValidateCallerField(incidentPage, `${macOrAdhocSearchTerm}`)
-    let newDesc = `${orgName}` // fix this
+    let newDesc = `${savedStrings.sirShortDescBefore} + ${orgName} + ${savedStrings.sirShortDescAfter}` //change this directly in other client
     setFieldValue(incidentPage, newDesc)
     await sleep(1000)
     aclick(incidentPage.createSecurityIncidentButton)
@@ -796,7 +798,7 @@ async function errorCheck(funct) {
   }
 }
 async function waitForExist(funct) {
-  console.debug((`(waitForExist) The funct is ${funct}`))
+  console.debug((`(waitForExist) The funct is ${funct.name}`))
   await retry(() => errorCheck(funct));
 }
 function getCardHeaders(page) {
