@@ -169,13 +169,14 @@ const oldSearchPage = {
 };
 
 // =======================================================================================
-class scripts {
+
+class mainScripts{
   // main scripts
   static async accountLocked() {
     // Accept, create INC, use account locked template, save page, open and send mail,
     const arrayEmail = await scripts.getDescriptionText(csPage);
     await scripts.createIncTicket();
-    await scripts.activateTemplate(incidentPage, "accountLocked");
+    await scripts.activateTemplateAndValidateCallerField(incidentPage, "accountLocked");
     await scripts.changeFollowUpTwoDays();
     await scripts.openMail(incidentPage);
     await scripts.sendMail(
@@ -213,17 +214,13 @@ class scripts {
     }
   }
 
-  static async jsonGetInfo() {
-    const output = await scripts.oldSearchGetInfo();
-    const outputInJson = JSON.stringify(output, null, 4);
-    console.debug(outputInJson);
-  }
+  
 
   static async notificationMail() {
     await waitForExist(csPage.acceptButton);
     await csPage.acceptButton().click();
     await waitForExist(csPage.proposeSolutionsButton)
-    await scripts.activateTemplate(csPage, "notificationMail");
+    await scripts.activateTemplateAndValidateCallerField(csPage, "notificationMail");
     await sleep (3000)
     await waitForExist(csPage.proposeSolutionsButton)
     await sleep(1000)
@@ -268,32 +265,34 @@ class scripts {
     } else {throw new Error('Invalid mac or ad hoc entry')}
     let arrayEmail = scripts.getDescriptionText(csPage)
     await scripts.createIncTicket()
-    await scripts.activateTemplate(incidentPage, `${macOrAdhocSearchTerm}`)
+    await scripts.activateTemplateAndValidateCallerField(incidentPage, `${macOrAdhocSearchTerm}`)
     let newDesc = `${orgName}` // fix this
     setFieldValue(incidentPage, newDesc)
     await sleep(1000)
-    scripts.aclick(incidentPage.createSecurityIncidentButton)
+    aclick(incidentPage.createSecurityIncidentButton)
     await sleep(6000)
     await waitForExist(securityIncidentPage.templateButton)
     await sleep(1000)
-    await scripts.aclick(securityIncidentPage.templateButton)
+    await aclick(securityIncidentPage.templateButton)
     await sleep(5000)
     let sirTicketNumber = `${securityIncidentPage.ticketNumber}`
     if (macOrAdhoc === 1) {
-      scripts.aclick(securityIncidentPage.macTemplate)
+      aclick(securityIncidentPage.macTemplate)
     } else if (macOrAdhoc === 2) {
-      scripts.aclick(securityIncidentPage.adhocTemplate)
+      aclick(securityIncidentPage.adhocTemplate)
     } else {throw new Error('error in mac/adhoc template for sec page')}
     await sleep(3000)
     
-    await this.savePage(securityIncidentPage)
+    await scripts.savePage(securityIncidentPage)
     await sleep (8000)
-    scripts.aclick(securityIncidentPage.closeButton)
+    aclick(securityIncidentPage.closeButton)
     await sleep(2000)
     scripts.openMail(incidentPage)
     scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString) // check sirString in savedStrings
     // scripts.savePage(incidentPage) // double check first everything else is functional
   }
+}
+class scripts {
   // mini scripts
 
   static regexPrinters(input) {
@@ -352,7 +351,7 @@ class scripts {
     await waitForExist(incidentPage.templateButton);
   }
 
-  static async activateTemplate(page, searchTerm) {
+  static async activateTemplateAndValidateCallerField(page, searchTerm) {
     // activate template and check for its completion
     // must use camelCase. Acronyms should be treated like any other normal word.
 
@@ -364,6 +363,10 @@ class scripts {
     setFieldValue(page.templateSearchBar, `*${searchTerm}`)
     await sleep(500);
     await waitForExist(page.firstTemplate);
+
+    //caller field validation
+    scripts.callerValidation(incidentPage.callerField)
+    
     await sleep(1000);
     await page.firstTemplate().click();
     await waitForExist(page.undoButton);
@@ -477,6 +480,7 @@ class scripts {
   }
 
   static getAssetTagsOldSearchPage() {
+    //broken
     const arrayOfRowsWithPersonalComputer = oldSearchPage.assetRows();
     try {
       const arrayOfAssetTagValues = [];
@@ -565,6 +569,7 @@ class scripts {
   
   static async acceptCsPage () {
     await csPage.acceptButton().click();
+    await sleep(6000)
     await waitForExist(csPage.proposeSolutionsButton);
   }
 
@@ -583,14 +588,22 @@ class scripts {
     await waitForExist()
   }
 
-  
-  static async aclick(element){
-    await waitForExist(element)
-    await element().click()
-    await sleep(100)
+  static async jsonGetInfo() {
+    const output = await scripts.oldSearchGetInfo();
+    const outputInJson = JSON.stringify(output, null, 4);
+    console.debug(outputInJson);
   }
 
+  static async callerValidation(page) {
+    await waitForExist(page.callerField)
+    let callerValue = page.callerField().value
+    if (callerValue === '') {
+      setFieldValue(page.callerField, 'ESD User')
+    } else {throw new Error('Unknown error in callerValidation')}
+  }
 }
+
+//----------- global functions
 
 function* descend(el, sel, parent) {
   if (el.matches(sel)) {
@@ -808,4 +821,13 @@ function searchDictCardHeader (page, term, asteriskCount=1) {
   }
 }
 
-console.log("add the new template entries in incident page, see new csPage, new req page, also see oneNote for details")
+async function aclick(element){
+  await waitForExist(element)
+  await element().click()
+  await sleep(100)
+}
+
+function cdebug(message){
+  let parentFunctionName = cdebug.caller.name
+  console.debug(`(${parentFunctionName}) ${message}`)
+}
