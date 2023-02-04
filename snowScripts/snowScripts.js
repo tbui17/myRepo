@@ -325,18 +325,9 @@ class scripts {
       ""
     );
     const regexSenderAndCC = /[a-zA-Z0-9_.]+@[a-zA-Z0-9_.]+/g;
-    const senderAndCCMatches = [
-      ...aboveToLowercaseFiltered.matchAll(regexSenderAndCC),
-    ];
-    const senderAndCC = [];
-    for (const match in senderAndCCMatches) {
-      if (Object.hasOwnProperty.call(senderAndCCMatches, match)) {
-        const element = senderAndCCMatches[match];
-        senderAndCC.push(element[0]);
-      }
-    }
-    const sender = senderAndCC[0];
-    const CC = senderAndCC.join("; ");
+    const senderAndCCArray = aboveToLowercaseFiltered.match(regexSenderAndCC)
+    const sender = senderAndCCArray[0];
+    const CC = senderAndCCArray.join("; ");
     const arrayEmail = {
       sender: `${sender};`,
       CC: `${CC}`,
