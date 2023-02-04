@@ -709,10 +709,29 @@ function setEmailFieldValue(selector, value, parentDocumentSelector) {
   let focus1 = new Event('focus')
   let blur1 = new Event('blur')
   let paste1 = new Event('paste')
+  let click1 = new Event('click')
+  let focusin1 = new Event('focusin')
+  let focusout1 = new Event('focusout')
+  let keydown1 = new Event('keydown')
+  let keypress1 = new Event('keypress')
+  let keyup1 = new Event('keyup')
+  let mouseout1 = new Event('mouseout')
+  let mouseover1 = new Event('mouseover')
+
+  selector().dispatchEvent(mouseover1)
+  selector().dispatchEvent(click1)
   selector().dispatchEvent(focus1)
+  selector().dispatchEvent(focusin1)
+
   selector().select();
   parentDocumentSelector().execCommand("insertText", false, value);
+
+  selector().dispatchEvent(keydown1)
+  selector().dispatchEvent(keypress1)
+  selector().dispatchEvent(keyup1)
   selector().dispatchEvent(paste1)
+  selector().dispatchEvent(mouseout1)
+  selector().dispatchEvent(focusout1)
   selector().dispatchEvent(blur1)
   if (selector().value != value) {
     console.log('Field did not change. Did you choose the right parent document?')
