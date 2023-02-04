@@ -328,10 +328,10 @@ class scripts {
     );
     
 
-    const regexAboveCC = /([\s\S]*)(?=Subject: )/;
-    const aboveCC = regexAboveCC.exec(input)[0];
-    const aboveCCLowercase = aboveCC.toLowerCase();
-    const aboveCCLowercaseFiltered = aboveToLowercase.replace(
+    const regexAboveSubject = /([\s\S]*)(?=Subject: )/;
+    const aboveSubject = regexAboveSubject.exec(input)[0];
+    const aboveSubjectLowercase = aboveSubject.toLowerCase();
+    const aboveCCLowercaseFiltered = aboveSubjectLowercase.replace(
       savedStrings.deskEmail,
       ""
     );
