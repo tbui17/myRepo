@@ -1,7 +1,8 @@
 
 const savedStrings = {
   accountLockedString: "",
-  deskEmail: "",
+  deskEmailString: "",
+  sirString: "",
 };
 
 class csPage {
@@ -79,7 +80,18 @@ class emailPage {
   static sendButton = () => {};
   static redErrorBanner = () => {};
 }
-class securityIncidentPage {}
+class securityIncidentPage {
+  static saveButton = () => {}
+
+  static templateButton = () => {}
+  static templateSearchBar = () => {};
+  static macTemplate = ()=>{}
+  static adhocTemplate = () => {}
+
+  static ticketNumber = () => {}
+
+  static closeButton = () => {}
+}
 
 class requestPage {
   // constructor()
@@ -246,6 +258,42 @@ class scripts {
     console.log('Complete. Ticket numbers below.')
     console.log(`${arrayTicketNumbers}`)
   }
+
+  static async sirTickets(orgName, macOrAdhoc){
+    let macOrAdhocSearchTerm;
+    if (macOrAdhoc === 1) {
+      macOrAdhocSearchTerm = 'sir'
+    } else if (macOrAdhoc === 2) {
+      macOrAdhocSearchTerm = 'sirAdHoc'
+    } else {throw new Error('Invalid mac or ad hoc entry')}
+    let arrayEmail = scripts.getDescriptionText(csPage)
+    await scripts.createIncTicket()
+    await scripts.activateTemplate(incidentPage, `${macOrAdhocSearchTerm}`)
+    let newDesc = `${orgName}` // fix this
+    setFieldValue(incidentPage, newDesc)
+    await sleep(1000)
+    scripts.aclick(incidentPage.createSecurityIncidentButton)
+    await sleep(6000)
+    await waitForExist(securityIncidentPage.templateButton)
+    await sleep(1000)
+    await scripts.aclick(securityIncidentPage.templateButton)
+    await sleep(5000)
+    let sirTicketNumber = `${securityIncidentPage.ticketNumber}`
+    if (macOrAdhoc === 1) {
+      scripts.aclick(securityIncidentPage.macTemplate)
+    } else if (macOrAdhoc === 2) {
+      scripts.aclick(securityIncidentPage.adhocTemplate)
+    } else {throw new Error('error in mac/adhoc template for sec page')}
+    await sleep(3000)
+    
+    await this.savePage(securityIncidentPage)
+    await sleep (8000)
+    scripts.aclick(securityIncidentPage.closeButton)
+    await sleep(2000)
+    scripts.openMail(incidentPage)
+    scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString) // check sirString in savedStrings
+    // scripts.savePage(incidentPage) // double check first everything else is functional
+  }
   // mini scripts
 
   static regexPrinters(input) {
@@ -258,7 +306,7 @@ class scripts {
     const regexSubject = /(?<=Subject:).*/;
     const subject = regexSubject.exec(input)[0];
     if (subject === null) {
-      const arrayEmail = 111;
+      const arrayEmail = null
       return arrayEmail;
     }
     const regexTo = /(?<=To: ).*/;
@@ -300,6 +348,7 @@ class scripts {
     await waitForExist(csPage.createIncidentButton);
     await sleep(200)
     await csPage.createIncidentButton.click();
+    await sleep(6000)
     await waitForExist(incidentPage.templateButton);
   }
 
@@ -309,14 +358,16 @@ class scripts {
 
     await waitForExist(page.templateButton);
     await page.templateButton().click();
+    await sleep(2000)
     await waitForExist(page.templateSearchBar);
     await sleep(1000);
     setFieldValue(page.templateSearchBar, `*${searchTerm}`)
+    await sleep(500);
     await waitForExist(page.firstTemplate);
     await sleep(1000);
     await page.firstTemplate().click();
     await waitForExist(page.undoButton);
-    await sleep(500)
+    await sleep(1000)
   }
 
   static async getDescriptionText(page) {
@@ -324,6 +375,9 @@ class scripts {
     const descBoxContents = page.descriptionBox().value;
     const arrayEmail = scripts.regexEmail(descBoxContents);
     console.debug("(getDescriptionText) ", arrayEmail);
+    if (arrayEmail === null) {
+      throw new Error('Nothing found for description text')
+    }
     return arrayEmail;
   }
 
@@ -345,31 +399,53 @@ class scripts {
     // open email page from the page you were on
     await page.moreActionsButton().click();
     await waitForExist(page.composeEmail);
+    await sleep(200)
     await page.composeEmail().click();
   }
 
   static async sendMail(page, arrayEmail, text) {
     // send email
-    if (arrayEmail === 111) {
-      console.debug(
-        "(sendMail) Subject does not contain email. Cancelling send mail."
-      );
-      return;
+    if (arrayEmail === null) {
+      throw new Error('(sendMail) arrayEmail is null.')
     }
     const textBr = scripts.convertToHtml(text);
     await waitForExist(page.textField); // double check entire email section
-    // page.toField().value = arrayEmail.sender
+    // page.toField().value = arrayEmail.sender // these are old methods of setting value
     // page.ccField().value = arrayEmail.CC
     // page.textField().innerHTML = text
     await sleep(3000);
-    setEmailFieldValue(page.toField, arrayEmail.sender, emailPage.emailDocument);
-    setEmailFieldValue(page.ccField, arrayEmail.sender, emailPage.emailDocument);
+    setEmailFieldValue(page.toField, arrayEmail.sender, page.emailDocument);
+    setEmailFieldValue(page.ccField, arrayEmail.CC, page.emailDocument);
     page.textField().innerHTML = textBr;
     await sleep(500); // optional
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
   }
 
+  static async sendMailSir(page, arrayEmail, ticketNumber, text) {
+    // send email
+    if (arrayEmail === null) {
+      throw new Error('(sendMail) arrayEmail is null.')
+    }
+    const textBr = scripts.convertToHtml(text);
+    await waitForExist(page.textField); // double check entire email section
+    // page.toField().value = arrayEmail.sender // these are old methods of setting value
+    // page.ccField().value = arrayEmail.CC
+    // page.textField().innerHTML = text
+    await sleep(3000);
+    setEmailFieldValue(page.toField, arrayEmail.sender, page.emailDocument);
+    setEmailFieldValue(page.ccField, arrayEmail.CC, page.emailDocument);
+    page.textField().innerHTML = textBr;
+    let oldSubj = page.subjectField().value
+    await sleep(100)
+    let newSubj = `${ticketNumber}/` + oldSubj
+    setEmailFieldValue(emailPage, newSubj, page.emailDocument)
+    await sleep(500); // optional
+    alert('Ready for review')
+    // await emailPageElements.sendButton().click() // ensure everything else is functional first
+  }
+
   static async datePlusTwoNight() {
+    // entire function is broken, need to adjust according to dateTime Object type
     const date = new Date();
     let dayAdd;
     if (date.getHours() >= 20) {
@@ -508,10 +584,12 @@ class scripts {
   }
 
   
-  
-  static async (){
-  
+  static async aclick(element){
+    await waitForExist(element)
+    await element().click()
+    await sleep(100)
   }
+
 }
 
 function* descend(el, sel, parent) {
@@ -590,6 +668,7 @@ function setFieldValue(selector, value) {
   selector().focus();
   selector().select();
   document.execCommand("insertText", false, value);
+  selector().blur();
   if (selector().value != value) {
     console.log('Field did not change. Is the content in an iframe?')
   }
@@ -600,6 +679,7 @@ function setEmailFieldValue(selector, value, parentDocumentSelector) {
   selector().focus();
   selector().select();
   parentDocumentSelector().execCommand("insertText", false, value);
+  selector().blur();
   if (selector().value != value) {
     console.log('Field did not change. Did you choose the right parent document?')
   }
