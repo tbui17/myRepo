@@ -315,6 +315,8 @@ class scripts {
       const arrayEmail = null
       return arrayEmail;
     }
+
+
     const regexTo = /(?<=To: ).*/;
     const to = regexTo.exec(input)[0];
     const regexAboveTo = /([\s\S]*)(?=To: )/;
@@ -324,9 +326,20 @@ class scripts {
       savedStrings.deskEmail,
       ""
     );
+    
+
+    const regexAboveCC = /([\s\S]*)(?=Subject: )/;
+    const aboveCC = regexAboveCC.exec(input)[0];
+    const aboveCCLowercase = aboveCC.toLowerCase();
+    const aboveCCLowercaseFiltered = aboveToLowercase.replace(
+      savedStrings.deskEmail,
+      ""
+    );
+
     const regexSenderAndCC = /[a-zA-Z0-9_.]+@[a-zA-Z0-9_.]+/g;
-    const senderAndCCArray = aboveToLowercaseFiltered.match(regexSenderAndCC)
-    const sender = senderAndCCArray[0];
+    const senderArray = aboveToLowercaseFiltered.match(regexSenderAndCC)
+    const sender = senderArray[0]
+    const senderAndCCArray = aboveCCLowercaseFiltered.match(regexSenderAndCC)
     const CC = senderAndCCArray.join("; ");
     const arrayEmail = {
       sender: `${sender};`,
