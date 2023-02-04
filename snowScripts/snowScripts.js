@@ -331,7 +331,7 @@ class scripts {
     const regexAboveSubject = /([\s\S]*)(?=Subject: )/;
     const aboveSubject = regexAboveSubject.exec(input)[0];
     const aboveSubjectLowercase = aboveSubject.toLowerCase();
-    const aboveCCLowercaseFiltered = aboveSubjectLowercase.replace(
+    const aboveSubjectLowercaseFiltered = aboveSubjectLowercase.replace(
       savedStrings.deskEmail,
       ""
     );
@@ -339,7 +339,7 @@ class scripts {
     const regexSenderAndCC = /[a-zA-Z0-9_.]+@[a-zA-Z0-9_.]+/g;
     const senderArray = aboveToLowercaseFiltered.match(regexSenderAndCC)
     const sender = senderArray[0]
-    const senderAndCCArray = aboveCCLowercaseFiltered.match(regexSenderAndCC)
+    const senderAndCCArray = aboveSubjectLowercaseFiltered.match(regexSenderAndCC)
     const CC = senderAndCCArray.join("; ");
     const arrayEmail = {
       sender: `${sender};`,
@@ -691,10 +691,14 @@ function elementValidation(page) {
 
 function setFieldValue(selector, value) {
   console.debug("(setFieldValue fieldElement and value are)", selector, value);
-  selector().focus();
+  let focus1 = new Event('focus')
+  let blur1 = new Event('blur')
+  let paste1 = new Event('paste')
+  selector().dispatchEvent(focus1)
   selector().select();
   document.execCommand("insertText", false, value);
-  selector().blur();
+  selector().dispatchEvent(blur1)
+  selector().dispatchEvent(paste1)
   if (selector().value != value) {
     console.log('Field did not change. Is the content in an iframe?')
   }
@@ -702,10 +706,14 @@ function setFieldValue(selector, value) {
 
 function setEmailFieldValue(selector, value, parentDocumentSelector) {
   console.debug("(setFieldValue fieldElement and value are)", selector, value);
-  selector().focus();
+  let focus1 = new Event('focus')
+  let blur1 = new Event('blur')
+  let paste1 = new Event('paste')
+  selector().dispatchEvent(focus1)
   selector().select();
   parentDocumentSelector().execCommand("insertText", false, value);
-  selector().blur();
+  selector().dispatchEvent(paste1)
+  selector().dispatchEvent(blur1)
   if (selector().value != value) {
     console.log('Field did not change. Did you choose the right parent document?')
   }
