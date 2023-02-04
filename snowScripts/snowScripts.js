@@ -4,7 +4,8 @@ const savedStrings = {
   deskEmailString: "",
   sirString: "",
   sirShortDescBefore: "",
-  sirShortDescAfter: "",
+  sirShortDescAfterMac: "",
+  sirShortDescAfterAdhoc: "",
 };
 
 class csPage {
@@ -261,15 +262,19 @@ class mainScripts{
 
   static async sirTickets(orgName, macOrAdhoc){
     let macOrAdhocSearchTerm;
+    let sirShortDescAfter;
     if (macOrAdhoc === 1) {
-      macOrAdhocSearchTerm = 'sir'
+      macOrAdhocSearchTerm = 'sirMac'
+      sirShortDescAfter = savedStrings.sirShortDescAfterMac
     } else if (macOrAdhoc === 2) {
       macOrAdhocSearchTerm = 'sirAdHoc'
+      sirShortDescAfter = savedStrings.sirShortDescAfterAdhoc
     } else {throw new Error('Invalid mac or ad hoc entry')}
     let arrayEmail = scripts.getDescriptionText(csPage)
     await scripts.createIncTicket()
+    
     await scripts.activateTemplateAndValidateCallerField(incidentPage, `${macOrAdhocSearchTerm}`)
-    let newDesc = `${savedStrings.sirShortDescBefore} + ${orgName} + ${savedStrings.sirShortDescAfter}` //change this directly in other client
+    let newDesc = `${savedStrings.sirShortDescBefore} + ${orgName} + ${savedStrings.sirShortDescAfter}`
     setFieldValue(incidentPage, newDesc)
     await sleep(1000)
     aclick(incidentPage.createSecurityIncidentButton)
