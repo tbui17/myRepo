@@ -383,13 +383,18 @@ class scripts {
     await waitForExist(page.templateSearchBar);
     await sleep(1000);
     await setFieldValue(page.templateSearchBar, `*${searchTerm}`)
-    await sleep(500);
+    await sleep(1000);
     await waitForExist(page.firstTemplate);
 
     //caller field validation
     scripts.callerValidation(incidentPage.callerField)
     
     await sleep(1000);
+    // validate correct template
+    if (page.firstTemplate().title != `*${searchTerm}`) {
+      throw new Error('(activatetemplate) firstTemplate title does not match search term')
+    }
+
     await page.firstTemplate().click();
     await sleep(1000)
     await waitForExist(page.undoButton);
