@@ -195,7 +195,7 @@ class mainScripts{
 
   static async threeTouchInc(touchNumber) {
     // for touch 1 and 2, change follow up to two days, write work note, save page, open mail, send mail.
-    const arrayEmail = scripts.getDescriptionText(incidentPage);
+    const arrayEmail = await scripts.getDescriptionText(incidentPage);
     await scripts.changeFollowUpTwoDays();
     if (touchNumber === 1) {
       await scripts.writeWorkNotes(
@@ -276,13 +276,13 @@ class mainScripts{
     } else {throw new Error('Invalid mac or ad hoc entry')}
 
     //create inc
-    let arrayEmail = scripts.getDescriptionText(csPage)
+    let arrayEmail = await scripts.getDescriptionText(csPage)
     await scripts.createIncTicket()
 
     //template activation
     await scripts.activateTemplateAndValidateCallerField(incidentPage, `${macOrAdhocSearchTerm}`)
     let newDesc = `${savedStrings.sirShortDescBefore} ${orgName} ${sirShortDescAfter}`
-    await setFieldValue(incidentPage.shortDescriptionField, newDesc)
+    await setExecFieldValue(incidentPage.shortDescriptionField, newDesc)
     await sleep(1000)
 
     //create sec ticket
@@ -326,7 +326,8 @@ class scripts {
     const subject = regexSubject.exec(input)[0];
     if (subject === null) {
       const arrayEmail = null
-      return arrayEmail;
+      throw new Error('arrayEmail is null')
+      // return arrayEmail;
     }
 
 
@@ -392,13 +393,11 @@ class scripts {
     scripts.callerValidation(incidentPage.callerField)
     
     await sleep(1000);
-    // validate correct template
-    await scripts.validateTemplateButton(page.h2FirstTemplate, searchTerm)
 
     await page.firstTemplate().click();
     await sleep(1000)
     await waitForExist(page.undoButton);
-    await sleep(1000)
+    await sleep(5000)
   }
 
   static async getDescriptionText(page) {
@@ -635,13 +634,6 @@ class scripts {
     } else {throw new Error('Unknown error in callerValidation')}
   }
 
-  static async validateTemplateButton(h2FirstTemplate, searchTerm) {
-    let elementTitleUpper = h2FirstTemplate().title.toUppercase()
-    let searchTermUpper = `*${searchTerm}`.toUpperCase()
-    if (elementTitleUpper != searchTermUpper) {
-      throw new Error('(validateTemplateButton) h2firstTemplate().title and searchTerm do not match.')
-    }
-  }
 }
 
 //----------- global functions
@@ -727,6 +719,24 @@ async function setFieldValue(selector, value) {
   // selector().select(); // old version
   // document.execCommand("insertText", false, value);
   selector().value=value
+  selector().dispatchEvent(paste1)
+  selector().dispatchEvent(input1)
+  await sleep (1000)
+  await selector().dispatchEvent(blur1)
+  if (selector().value != value) {
+    console.log('(setFieldValue) Field did not change. Is the content in an iframe?')
+  }
+}
+
+async function setExecFieldValue(selector, value) {
+  console.debug("(setFieldValue fieldElement and value are)", selector, value);
+  let focus1 = new Event('focus')
+  let blur1 = new Event('blur')
+  let paste1 = new Event('paste')
+  let input1 = new Event('input')
+  selector().dispatchEvent(focus1)
+  selector().select(); // old version
+  document.execCommand("insertText", false, value);
   selector().dispatchEvent(paste1)
   selector().dispatchEvent(input1)
   await sleep (1000)
