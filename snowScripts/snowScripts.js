@@ -9,11 +9,11 @@ const savedStrings = {
 };
 
 class csPage {
-  static acceptButton = () => {};
+  static acceptButton = () => new HTMLElement()
   static saveButton = () => {};
 
   // All elements under More Actions button are hidden until moreActions is pressed, wait 0.1s for element to appear.
-  static moreActionsButton = () => {};
+  static moreActionsButton = () => new Element()
   static composeEmailButton = () => {};
   static createIncidentButton = () => {};
   static proposeSolutionsButton = () => {};
@@ -92,7 +92,7 @@ class securityIncidentPage {
   static adhocTemplate = () => {}
   static undoButton = () => {};
 
-  static ticketNumber = () => {}
+  static ticketNumber = () => new HTMLFormElement()
 
   static closeButton = () => {}
 }
@@ -263,6 +263,8 @@ class mainScripts{
   static async sirTickets(orgName, macOrAdhoc){
     let macOrAdhocSearchTerm;
     let sirShortDescAfter;
+
+    //conditionals for mac/adhoc
     if (macOrAdhoc === 1) {
       macOrAdhocSearchTerm = 'sirMac'
       sirShortDescAfter = savedStrings.sirShortDescAfterMac
@@ -270,19 +272,27 @@ class mainScripts{
       macOrAdhocSearchTerm = 'sirAdHoc'
       sirShortDescAfter = savedStrings.sirShortDescAfterAdhoc
     } else {throw new Error('Invalid mac or ad hoc entry')}
+
+    //create inc
     let arrayEmail = scripts.getDescriptionText(csPage)
     await scripts.createIncTicket()
+
+    //template activation
     await scripts.activateTemplateAndValidateCallerField(incidentPage, `${macOrAdhocSearchTerm}`)
     let newDesc = `${savedStrings.sirShortDescBefore} ${orgName} ${sirShortDescAfter}`
     await setFieldValue(incidentPage.shortDescriptionField, newDesc)
     await sleep(1000)
+
+    //create sec ticket
     await aclick(incidentPage.createSecurityIncidentButton)
     await sleep(6000)
+
+    //templates activation and get sir ticket
     await waitForExist(securityIncidentPage.templateButton)
     await sleep(1000)
     await aclick(securityIncidentPage.templateButton)
     await sleep(5000)
-    let sirTicketNumber = `${securityIncidentPage.ticketNumber().value()}`
+    let sirTicketNumber = `${securityIncidentPage.ticketNumber().value}`
     if (macOrAdhoc === 1) {
       aclick(securityIncidentPage.macTemplate)
     } else if (macOrAdhoc === 2) {
@@ -296,6 +306,7 @@ class mainScripts{
     await sleep(2000)
     await scripts.openMail(incidentPage)
     await scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString) // check sirString in savedStrings
+    alert('Ready for review')
     // scripts.savePage(incidentPage) // double check first everything else is functional
   }
 }
@@ -322,7 +333,7 @@ class scripts {
     const regexAboveTo = /([\s\S]*)(?=To: )/;
     const aboveTo = regexAboveTo.exec(input)[0];
     const aboveToLowercase = aboveTo.toLowerCase();
-    const aboveToLowercaseFiltered = aboveToLowercase.replace(
+    const aboveToLowercaseFiltered = aboveToLowercase.replaceAll(
       savedStrings.deskEmail,
       ""
     );
@@ -331,7 +342,7 @@ class scripts {
     const regexAboveSubject = /([\s\S]*)(?=Subject: )/;
     const aboveSubject = regexAboveSubject.exec(input)[0];
     const aboveSubjectLowercase = aboveSubject.toLowerCase();
-    const aboveSubjectLowercaseFiltered = aboveSubjectLowercase.replace(
+    const aboveSubjectLowercaseFiltered = aboveSubjectLowercase.replaceAll(
       savedStrings.deskEmail,
       ""
     );
@@ -358,7 +369,7 @@ class scripts {
     await sleep(200)
     await waitForExist(csPage.createIncidentButton);
     await csPage.createIncidentButton().click();
-    await sleep(6000)
+    await sleep(10000)
     await waitForExist(incidentPage.templateButton);
   }
 
@@ -368,7 +379,7 @@ class scripts {
 
     await waitForExist(page.templateButton);
     await page.templateButton().click();
-    await sleep(2000)
+    await sleep(5000)
     await waitForExist(page.templateSearchBar);
     await sleep(1000);
     await setFieldValue(page.templateSearchBar, `*${searchTerm}`)
@@ -380,6 +391,7 @@ class scripts {
     
     await sleep(1000);
     await page.firstTemplate().click();
+    await sleep(1000)
     await waitForExist(page.undoButton);
     await sleep(1000)
   }
@@ -415,15 +427,17 @@ class scripts {
     await sleep(200)
     await waitForExist(page.composeEmailButton);
     await page.composeEmailButton().click();
-    await sleep(5000)
+    await sleep(10000)
     await waitForExist(emailPage.textField)
   }
 
   static async sendMail(page, arrayEmail, text) {
     // send email
-    if (arrayEmail === null) {
-      throw new Error('(sendMail) arrayEmail is null.')
+    if (arrayEmail === null || arrayEmail === undefined) {
+      throw new Error(`(sendMail) arrayEmail is null or undefined. ${arrayEmail}`)
     }
+    console.debug(`(sendMail) arrayEmail: ${arrayEmail}`)
+    console.debug(`(sendMail) text: ${text}`)
     const textBr = scripts.convertToHtml(text);
     await waitForExist(page.textField); // double check entire email section
     // page.toField().value = arrayEmail.sender // these are old methods of setting value
@@ -439,9 +453,11 @@ class scripts {
 
   static async sendMailSir(page, arrayEmail, ticketNumber, text) {
     // send email
-    if (arrayEmail === null) {
-      throw new Error('(sendMail) arrayEmail is null.')
+    if (arrayEmail === null || arrayEmail === undefined) {
+      throw new Error(`(sendMailSir) arrayEmail is null or undefined. ${arrayEmail}`)
     }
+    console.debug(`(sendMailSir) arrayEmail: ${arrayEmail}`)
+    console.debug(`(sendMailSir) text: ${text}`)
     const textBr = scripts.convertToHtml(text);
     await waitForExist(page.textField); // double check entire email section
     // page.toField().value = arrayEmail.sender // these are old methods of setting value
@@ -454,9 +470,8 @@ class scripts {
     let oldSubj = page.subjectField().value
     await sleep(100)
     let newSubj = `${ticketNumber}/` + oldSubj
-    await setEmailFieldValue(emailPage, newSubj, page.emailDocument)
+    await setEmailFieldValue(emailPage.subjectField, newSubj, page.emailDocument)
     await sleep(500); // optional
-    alert('Ready for review')
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
   }
 
@@ -572,7 +587,7 @@ class scripts {
   }
 
   static convertToHtml(string) {
-    const res = string.replace("\n", "<br>");
+    const res = string.replaceAll("\n", "<br>");
     return res;
   }
 
@@ -700,7 +715,7 @@ async function setFieldValue(selector, value) {
   selector().value=value
   selector().dispatchEvent(paste1)
   await sleep (1000)
-  selector().dispatchEvent(blur1)
+  await selector().dispatchEvent(blur1)
   if (selector().value != value) {
     console.log('(setFieldValue) Field did not change. Is the content in an iframe?')
   }
@@ -719,7 +734,7 @@ async function setEmailFieldValue(selector, value, parentDocumentSelector) {
   await sleep (1000)
   selector().dispatchEvent(blur1)
   if (selector().value != value) {
-    console.log('(setFieldValue) Field did not change. Did you choose the right parent document?')
+    console.log('Field did not change. Did you choose the right parent document?')
   }
 }
 
