@@ -23,6 +23,7 @@ class csPage {
   static templateSearchBar = () => {};
   static undoButton = () => {};
   static firstTemplate = ()=>{};
+  static h2FirstTemplate = ()=>{};
 
   static kbaSearchBar = () =>{};
   static firstKbaCard = ()=>{};
@@ -53,6 +54,7 @@ class incidentPage {
   static templateSearchBar = () => {};
   static undoButton = () => {};
   static firstTemplate = ()=>{};
+  static h2FirstTemplate = ()=>{};
 
   static accountLockedTemplate = () => searchDictCardHeader(this, 'accountLocked')
   static categoriesTemplate = () => {};
@@ -391,9 +393,7 @@ class scripts {
     
     await sleep(1000);
     // validate correct template
-    if (page.firstTemplate().title != `*${searchTerm}`) {
-      throw new Error('(activatetemplate) firstTemplate title does not match search term')
-    }
+    await scripts.validateTemplateButton(page.h2FirstTemplate, searchTerm)
 
     await page.firstTemplate().click();
     await sleep(1000)
@@ -633,6 +633,14 @@ class scripts {
     if (callerValue === '') {
       await setFieldValue(page.callerField, 'ESD User')
     } else {throw new Error('Unknown error in callerValidation')}
+  }
+
+  static async validateTemplateButton(h2FirstTemplate, searchTerm) {
+    let elementTitleUpper = h2FirstTemplate().title.toUppercase()
+    let searchTermUpper = `*${searchTerm}`.toUpperCase()
+    if (elementTitleUpper != searchTermUpper) {
+      throw new Error('(validateTemplateButton) h2firstTemplate().title and searchTerm do not match.')
+    }
   }
 }
 
