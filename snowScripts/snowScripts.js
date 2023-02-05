@@ -714,11 +714,13 @@ async function setFieldValue(selector, value) {
   let focus1 = new Event('focus')
   let blur1 = new Event('blur')
   let paste1 = new Event('paste')
+  let input1 = new Event('input')
   selector().dispatchEvent(focus1)
   // selector().select(); // old version
   // document.execCommand("insertText", false, value);
   selector().value=value
   selector().dispatchEvent(paste1)
+  selector().dispatchEvent(input1)
   await sleep (1000)
   await selector().dispatchEvent(blur1)
   if (selector().value != value) {
