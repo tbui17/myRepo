@@ -246,8 +246,8 @@ class mainScripts{
       await oldIncPage.printers2Template().click()
       await waitForExist(oldIncPage.alertWindow)
       await sleep(1000)
-      setEmailFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`, oldIncPage.iframe)
-      setEmailFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`, oldIncPage.iframe)
+      await setEmailFieldValue(oldIncPage.assignmentGroup, `${supportCenter}`, oldIncPage.iframe)
+      await setEmailFieldValue(oldIncPage.shortDescriptionField, `${match} is now Stale`, oldIncPage.iframe)
       await scripts.savePage(oldIncPage)
       await sleep(6000)
       await waitForExist(oldIncPage.createSecurityIncidentButton)
@@ -274,7 +274,7 @@ class mainScripts{
     await scripts.createIncTicket()
     await scripts.activateTemplateAndValidateCallerField(incidentPage, `${macOrAdhocSearchTerm}`)
     let newDesc = `${savedStrings.sirShortDescBefore} ${orgName} ${sirShortDescAfter}`
-    setFieldValue(incidentPage.shortDescriptionField, newDesc)
+    await setFieldValue(incidentPage.shortDescriptionField, newDesc)
     await sleep(1000)
     await aclick(incidentPage.createSecurityIncidentButton)
     await sleep(6000)
@@ -371,7 +371,7 @@ class scripts {
     await sleep(2000)
     await waitForExist(page.templateSearchBar);
     await sleep(1000);
-    setFieldValue(page.templateSearchBar, `*${searchTerm}`)
+    await setFieldValue(page.templateSearchBar, `*${searchTerm}`)
     await sleep(500);
     await waitForExist(page.firstTemplate);
 
@@ -401,7 +401,7 @@ class scripts {
 
   static async changeFollowUpTwoDays() {
     const dateInTwoDays = scripts.datePlusTwoNight();
-    setFieldValue(incidentPage.followUpDateField, dateInTwoDays);
+    await setFieldValue(incidentPage.followUpDateField, dateInTwoDays);
   }
 
   static async savePage(page) {
@@ -430,8 +430,8 @@ class scripts {
     // page.ccField().value = arrayEmail.CC
     // page.textField().innerHTML = text
     await sleep(3000);
-    setEmailFieldValue(page.toField, arrayEmail.sender, page.emailDocument);
-    setEmailFieldValue(page.ccField, arrayEmail.CC, page.emailDocument);
+    await setEmailFieldValue(page.toField, arrayEmail.sender, page.emailDocument);
+    await setEmailFieldValue(page.ccField, arrayEmail.CC, page.emailDocument);
     page.textField().innerHTML = textBr;
     await sleep(500); // optional
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
@@ -448,13 +448,13 @@ class scripts {
     // page.ccField().value = arrayEmail.CC
     // page.textField().innerHTML = text
     await sleep(3000);
-    setEmailFieldValue(page.toField, arrayEmail.sender, page.emailDocument);
-    setEmailFieldValue(page.ccField, arrayEmail.CC, page.emailDocument);
+    await setEmailFieldValue(page.toField, arrayEmail.sender, page.emailDocument);
+    await setEmailFieldValue(page.ccField, arrayEmail.CC, page.emailDocument);
     page.textField().innerHTML = textBr;
     let oldSubj = page.subjectField().value
     await sleep(100)
     let newSubj = `${ticketNumber}/` + oldSubj
-    setEmailFieldValue(emailPage, newSubj, page.emailDocument)
+    await setEmailFieldValue(emailPage, newSubj, page.emailDocument)
     await sleep(500); // optional
     alert('Ready for review')
     // await emailPageElements.sendButton().click() // ensure everything else is functional first
@@ -591,7 +591,7 @@ class scripts {
   static async searchForRequestItemAndClick(page, searchTerm){
     await waitForExist(page.kbaSearchBar);
     await sleep(1000)
-    setFieldValue(page.kbaSearchBar, searchTerm)
+    await setFieldValue(page.kbaSearchBar, searchTerm)
     await waitForExist(page.firstKbaCard)
     await sleep(2000)
     await waitForExist(page.submitRequestButton)
@@ -611,7 +611,7 @@ class scripts {
     await waitForExist(page.callerField)
     let callerValue = page.callerField().value
     if (callerValue === '') {
-      setFieldValue(page.callerField, 'ESD User')
+      await setFieldValue(page.callerField, 'ESD User')
     } else {throw new Error('Unknown error in callerValidation')}
   }
 }
@@ -689,52 +689,37 @@ function elementValidation(page) {
   }
 }
 
-function setFieldValue(selector, value) {
+async function setFieldValue(selector, value) {
   console.debug("(setFieldValue fieldElement and value are)", selector, value);
   let focus1 = new Event('focus')
   let blur1 = new Event('blur')
   let paste1 = new Event('paste')
   selector().dispatchEvent(focus1)
-  selector().select();
-  document.execCommand("insertText", false, value);
-  selector().dispatchEvent(blur1)
+  // selector().select(); // old version
+  // document.execCommand("insertText", false, value);
+  selector().value=value
   selector().dispatchEvent(paste1)
+  await sleep (1000)
+  selector().dispatchEvent(blur1)
   if (selector().value != value) {
-    console.log('Field did not change. Is the content in an iframe?')
+    console.log('(setFieldValue) Field did not change. Is the content in an iframe?')
   }
 }
 
-function setEmailFieldValue(selector, value, parentDocumentSelector) {
-  console.debug("(setFieldValue fieldElement and value are)", selector, value);
+async function setEmailFieldValue(selector, value, parentDocumentSelector) {
+  console.debug("(emailsetFieldValue fieldElement and value are)", selector, value);
   let focus1 = new Event('focus')
   let blur1 = new Event('blur')
   let paste1 = new Event('paste')
-  let click1 = new Event('click')
-  let focusin1 = new Event('focusin')
-  let focusout1 = new Event('focusout')
-  let keydown1 = new Event('keydown')
-  let keypress1 = new Event('keypress')
-  let keyup1 = new Event('keyup')
-  let mouseout1 = new Event('mouseout')
-  let mouseover1 = new Event('mouseover')
-
-  selector().dispatchEvent(mouseover1)
-  selector().dispatchEvent(click1)
   selector().dispatchEvent(focus1)
-  selector().dispatchEvent(focusin1)
-
-  selector().select();
-  parentDocumentSelector().execCommand("insertText", false, value);
-
-  selector().dispatchEvent(keydown1)
-  selector().dispatchEvent(keypress1)
-  selector().dispatchEvent(keyup1)
+  // selector().select(); // old version
+  // parentDocumentSelector().execCommand("insertText", false, value);
+  selector().value=value
   selector().dispatchEvent(paste1)
-  selector().dispatchEvent(mouseout1)
-  selector().dispatchEvent(focusout1)
+  await sleep (1000)
   selector().dispatchEvent(blur1)
   if (selector().value != value) {
-    console.log('Field did not change. Did you choose the right parent document?')
+    console.log('(setFieldValue) Field did not change. Did you choose the right parent document?')
   }
 }
 
