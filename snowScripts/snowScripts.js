@@ -315,7 +315,10 @@ class mainScripts{
     await aclick(securityIncidentPage.closeButton)
     await sleep(2000)
     await scripts.openMail(incidentPage)
-    await scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString) // check sirString in savedStrings
+    await scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString)
+    await tabSelect(1)
+    await scripts.savePage(incidentPage)
+    await sleep(10000)
     alert('Ready for review')
     // scripts.savePage(incidentPage) // double check first everything else is functional
   }
@@ -912,7 +915,8 @@ function cdebug(message){
 
 async function tabSelect(tabIndex){
   let tabBar = await incidentPage.tabBar()
-  let tab = await tabBar.querySelector(`sn-workspace-tab:nth(${tabIndex})`).shadowRoot.querySelector('a')
-  await aclick(tab)
+  let tab = await tabBar.querySelector(`sn-workspace-tab:nth-child(${tabIndex})`).shadowRoot.querySelector('a')
+  await tab.click()
+  await sleep(1000)
   cdebug(`Clicked tab of index ${tabIndex}`)
 }
