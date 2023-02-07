@@ -68,6 +68,7 @@ class incidentPage {
   static followUpDateField = () => {};
   static statusChoice = () => {};
   static assignedToField = () => {}
+  static assignmentGroupField = () => {}
 
   // ribbon
   static userID = () => {};
@@ -287,8 +288,8 @@ class mainScripts{
     await sleep(1000)
 
     //create sec ticket after validation
-    await waitForExist(incidentPage.assignedToField)
-    if (incidentPage.assignedToField().value != 'Privacy') {
+    await waitForExist(incidentPage.assignmentGroupField)
+    if (incidentPage.assignmentGroupField().value != 'Privacy') {
       throw new Error('Privacy is not the assigned group.')
     }
     await aclick(incidentPage.createSecurityIncidentButton)
