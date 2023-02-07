@@ -912,7 +912,7 @@ function cdebug(message){
 
 async function tabSelect(tabIndex){
   let tabBar = await incidentPage.tabBar()
-  let tab = await tabBar.querySelector(`sn-workspace-tab:nth(${tabIndex})`)
+  let tab = await tabBar.querySelector(`sn-workspace-tab:nth(${tabIndex})`).shadowRoot.querySelector('a')
   await aclick(tab)
   cdebug(`Clicked tab of index ${tabIndex}`)
 }
