@@ -74,6 +74,8 @@ class incidentPage {
   static userID = () => {};
   static phoneNumber = () => {};
   static email = () => {};
+
+  static tabBar = () => {}
 }
 
 class emailPage {
@@ -793,17 +795,6 @@ function queryCleaner(queryAsString) {
   console.debug(final);
 }
 
-const deepSelectorAll = (node, selector) => {
-  const nodes = [...node.querySelectorAll(selector)];
-  const nodeIterator = document.createNodeIterator(node, Node.ELEMENT_NODE);
-  let currentNode;
-  while (currentNode === nodeIterator.nextNode()) {
-    if (currentNode.shadowRoot) {
-      nodes.push(...deepSelectorAll(currentNode.shadowRoot, selector));
-    }
-  }
-  return nodes;
-};
 
 function sleep(ms) {
   console.debug(`(sleep) sleeping for ${ms} ms`)
@@ -917,4 +908,11 @@ async function aclick(element){
 function cdebug(message){
   let parentFunctionName = cdebug.caller.name
   console.debug(`(${parentFunctionName}) ${message}`)
+}
+
+async function tabSelect(tabIndex){
+  let tabBar = await incidentPage.tabBar()
+  let tab = await tabBar.querySelector(`sn-workspace-tab:nth(${tabIndex})`)
+  await aclick(tab)
+  cdebug(`Clicked tab of index ${tabIndex}`)
 }
