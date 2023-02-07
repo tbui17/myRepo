@@ -316,7 +316,7 @@ class mainScripts{
     await sleep(2000)
     await scripts.openMail(incidentPage)
     await scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString)
-    await tabSelect(1)
+    await tabSelect(2)
     await scripts.savePage(incidentPage)
     await sleep(10000)
     alert('Ready for review')
