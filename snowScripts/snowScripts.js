@@ -741,6 +741,7 @@ async function setExecFieldValue(selector, value) {
   let paste1 = new Event('paste')
   let input1 = new Event('input')
   await selector().dispatchEvent(focus1)
+  await sleep(1000)
   await selector().select(); // old version
   await document.execCommand("insertText", false, value);
   await selector().dispatchEvent(paste1)
@@ -758,6 +759,7 @@ async function setEmailFieldValue(selector, value, parentDocumentSelector) {
   let blur1 = new Event('blur')
   let paste1 = new Event('paste')
   await selector().dispatchEvent(focus1)
+  await sleep(1000)
   // selector().select(); // old version
   // parentDocumentSelector().execCommand("insertText", false, value);
   selector().value=value
@@ -792,6 +794,7 @@ const deepSelectorAll = (node, selector) => {
 };
 
 function sleep(ms) {
+  console.debug(`(sleep) sleeping for ${ms} ms`)
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
