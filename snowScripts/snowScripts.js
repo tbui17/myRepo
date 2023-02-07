@@ -740,6 +740,12 @@ async function setExecFieldValue(selector, value) {
   let blur1 = new Event('blur')
   let paste1 = new Event('paste')
   let input1 = new Event('input')
+
+  //trigger adding event listeners
+  await selector().dispatchEvent(focus1)
+  await sleep(1000)
+  await selector().dispatchEvent(blur1)
+
   await selector().dispatchEvent(focus1)
   await sleep(1000)
   await selector().select(); // old version
@@ -758,6 +764,12 @@ async function setEmailFieldValue(selector, value, parentDocumentSelector) {
   let focus1 = new Event('focus')
   let blur1 = new Event('blur')
   let paste1 = new Event('paste')
+
+  //trigger adding event listeners
+  await selector().dispatchEvent(focus1)
+  await sleep(1000)
+  await selector().dispatchEvent(blur1)
+
   await selector().dispatchEvent(focus1)
   await sleep(1000)
   // selector().select(); // old version
