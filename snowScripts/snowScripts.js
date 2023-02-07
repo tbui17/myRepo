@@ -67,6 +67,7 @@ class incidentPage {
   static callerField = () => {};
   static followUpDateField = () => {};
   static statusChoice = () => {};
+  static assignedToField = () => {}
 
   // ribbon
   static userID = () => {};
@@ -285,7 +286,11 @@ class mainScripts{
     await setExecFieldValue(incidentPage.shortDescriptionField, newDesc)
     await sleep(1000)
 
-    //create sec ticket
+    //create sec ticket after validation
+    await waitForExist(incidentPage.assignedToField)
+    if (incidentPage.assignedToField().value != 'Privacy') {
+      throw new Error('Privacy is not the assigned group.')
+    }
     await aclick(incidentPage.createSecurityIncidentButton)
     await sleep(6000)
 
@@ -304,7 +309,7 @@ class mainScripts{
     
     await scripts.savePage(securityIncidentPage)
     await sleep (8000)
-    aclick(securityIncidentPage.closeButton)
+    await aclick(securityIncidentPage.closeButton)
     await sleep(2000)
     await scripts.openMail(incidentPage)
     await scripts.sendMailSir(emailPage, arrayEmail, sirTicketNumber, savedStrings.sirString) // check sirString in savedStrings
