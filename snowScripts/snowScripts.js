@@ -9,7 +9,7 @@ const savedStrings = {
 };
 
 const settings = {
-  csOpenTicketMode:2 //1 = accept 2 = manual
+  csOpenTicketMode:2 //1 = accept 2 = assigntome 3 = manual
 }
 
 class csPage {
@@ -323,7 +323,6 @@ class mainScripts{
     await tabSelect(2)
     await scripts.savePage(incidentPage)
     await sleep(10000)
-    alert('Ready for review')
     // scripts.savePage(incidentPage) // double check first everything else is functional
   }
 }
@@ -382,8 +381,8 @@ class scripts {
 
   static async createIncTicket() {
     // create the incident ticket
-
-    await csPage.moreActionsButton().click();
+    await scripts.openCsTicket()
+    await aclick(csPage.moreActionsButton)
     await sleep(200)
     await waitForExist(csPage.createIncidentButton);
     await csPage.createIncidentButton().click();
@@ -660,6 +659,7 @@ class scripts {
       return
     }
     else {throw new Error('Invalid setting for openCsTicket')}
+    await sleep(5000)
   }
 }
 
