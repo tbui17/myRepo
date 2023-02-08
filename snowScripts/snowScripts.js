@@ -191,7 +191,7 @@ class mainScripts{
     // Accept, create INC, use account locked template, save page, open and send mail,
     const arrayEmail = await scripts.getDescriptionText(csPage);
     await scripts.createIncTicket();
-    await scripts.activateTemplateAndValidateCallerField(incidentPage, "accountLocked");
+    await scripts.activateTemplate(incidentPage, "accountLocked");
     await scripts.changeFollowUpTwoDays();
     await scripts.openMail(incidentPage);
     await scripts.sendMail(
@@ -232,10 +232,9 @@ class mainScripts{
   
 
   static async notificationMail() {
-    await waitForExist(csPage.acceptButton);
-    await csPage.acceptButton().click();
+    await scripts.openCsTicket()
     await waitForExist(csPage.proposeSolutionsButton)
-    await scripts.activateTemplateAndValidateCallerField(csPage, "notificationMail");
+    await scripts.activateTemplate(csPage, "notificationMail");
     await sleep (3000)
     await waitForExist(csPage.proposeSolutionsButton)
     await sleep(1000)
@@ -288,20 +287,25 @@ class mainScripts{
     await scripts.createIncTicket()
 
     //template activation
-    await scripts.activateTemplateAndValidateCallerField(incidentPage, `${macOrAdhocSearchTerm}`)
+    await scripts.activateTemplate(incidentPage, `${macOrAdhocSearchTerm}`)
     let newDesc = `${savedStrings.sirShortDescBefore} ${orgName} ${sirShortDescAfter}`
     await setExecFieldValue(incidentPage.shortDescriptionField, newDesc)
     await sleep(1000)
 
     //create sec ticket after validation
     await waitForExist(incidentPage.assignmentGroupField)
+
+    ///validation
     if (incidentPage.assignmentGroupField().value != 'Privacy') {
       throw new Error('Privacy is not the assigned group.')
     }
+    await scripts.callerValidation(incidentPage)
+
+    
     await aclick(incidentPage.createSecurityIncidentButton)
     await sleep(6000)
 
-    //templates activation and get sir ticket
+    //templates activation and get sir ticket number
     await waitForExist(securityIncidentPage.templateButton)
     await sleep(1000)
     await aclick(securityIncidentPage.templateButton)
@@ -390,7 +394,7 @@ class scripts {
     await waitForExist(incidentPage.templateButton);
   }
 
-  static async activateTemplateAndValidateCallerField(page, searchTerm) {
+  static async activateTemplate(page, searchTerm) {
     // activate template and check for its completion
     // must use camelCase. Acronyms should be treated like any other normal word.
 
@@ -402,12 +406,7 @@ class scripts {
     await setFieldValue(page.templateSearchBar, `*${searchTerm}`)
     await sleep(1000);
     await waitForExist(page.firstTemplate);
-
-    //caller field validation
-    scripts.callerValidation(incidentPage.callerField)
-    
     await sleep(1000);
-
     await page.firstTemplate().click();
     await sleep(1000)
     await waitForExist(page.undoButton);
