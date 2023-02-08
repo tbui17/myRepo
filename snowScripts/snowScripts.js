@@ -419,7 +419,7 @@ class scripts {
     const descBoxContents = page.descriptionBox().value;
     const arrayEmail = scripts.regexEmail(descBoxContents);
     console.debug("(getDescriptionText) ", arrayEmail);
-    if (arrayEmail === null) {
+    if (arrayEmail == null) {
       throw new Error('Nothing found for description text')
     }
     return arrayEmail;
