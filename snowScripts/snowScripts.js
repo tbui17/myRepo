@@ -37,7 +37,7 @@ class csPage {
   static descriptionBox = () => {};
   static shortDescriptionField = () => {};
   static workNotesBox = () => {};
-
+  // Is actually called "contact" but for compatibility, will name as "caller"
   static callerField = () => {}
 }
 
@@ -926,8 +926,15 @@ async function aclick(element){
 }
 
 function cdebug(message){
-  let parentFunctionName = cdebug.caller.name
-  console.debug(`(${parentFunctionName}) ${message}`)
+  try {
+    let parentFunctionName = cdebug.caller.name
+    console.debug(`(${parentFunctionName}) ${message}`)
+  } catch (error) {
+    console.debug(`(cdebug) Workaround: The message was : ${message}`)
+    console.debug(`(cdebug) Could not get caller.name. Error is : ${error}`)
+  }
+  
+  
 }
 
 async function tabSelect(tabIndex){
