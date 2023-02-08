@@ -264,6 +264,7 @@ class mainScripts{
     }
     console.log('Complete. Ticket numbers below.')
     console.log(`${arrayTicketNumbers}`)
+    return arrayTicketNumbers
   }
 
   static async sirTickets(orgName, macOrAdhoc){
@@ -639,11 +640,10 @@ class scripts {
 
   static async callerValidation(page) {
     await waitForExist(page.callerField)
-    let callerValue = page.callerField().value
-    if (callerValue === '') {
+    if (page.callerField().value == '') {
+      cdebug('Caller field was blank, changing to ESD User.')
       await setFieldValue(page.callerField, 'ESD User')
-    } else {throw new Error('Unknown error in callerValidation')}
-  }
+    } else {cdebug(`Caller field value is ${page.callerField().value}`)}
 
 }
 
