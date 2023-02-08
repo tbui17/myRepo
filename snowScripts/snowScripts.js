@@ -37,6 +37,8 @@ class csPage {
   static descriptionBox = () => {};
   static shortDescriptionField = () => {};
   static workNotesBox = () => {};
+
+  static callerField = () => {}
 }
 
 class incidentPage {
