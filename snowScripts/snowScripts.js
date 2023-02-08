@@ -644,8 +644,7 @@ class scripts {
       cdebug('Caller field was blank, changing to ESD User.')
       await setFieldValue(page.callerField, 'ESD User')
     } else {cdebug(`Caller field value is ${page.callerField().value}`)}
-
-}
+  }
 
 //----------- global functions
 
