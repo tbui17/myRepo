@@ -933,8 +933,6 @@ function cdebug(message){
     console.debug(`(cdebug) Workaround: The message was : ${message}`)
     console.debug(`(cdebug) Could not get caller.name. Error is : ${error}`)
   }
-  
-  
 }
 
 async function tabSelect(tabIndex){
