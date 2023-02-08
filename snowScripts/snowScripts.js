@@ -8,6 +8,10 @@ const savedStrings = {
   sirShortDescAfterAdhoc: "",
 };
 
+const settings = {
+  csOpenTicketMode:2 //1 = accept 2 = manual
+}
+
 class csPage {
   static acceptButton = () => new HTMLElement()
   static saveButton = () => {};
@@ -17,6 +21,7 @@ class csPage {
   static composeEmailButton = () => {};
   static createIncidentButton = () => {};
   static proposeSolutionsButton = () => {};
+  static assignToMeButton = () => {}
 
   // may be prone to breaking if search results return more than one template
   static templateButton = () => {};
@@ -236,8 +241,6 @@ class mainScripts{
     await sleep(1000)
     await csPage.proposeSolutionsButton().click()
   }
-
-  
   
   static async printers(supportCenter, descContent){
     const arrayMatches = scripts.regexPrinters(descContent)
@@ -640,11 +643,25 @@ class scripts {
 
   static async callerValidation(page) {
     await waitForExist(page.callerField)
-    if (page.callerField().value == '') {
+    if (page.callerField().value == false) {
       cdebug('Caller field was blank, changing to ESD User.')
       await setFieldValue(page.callerField, 'ESD User')
     } else {cdebug(`Caller field value is ${page.callerField().value}`)}
   }
+  
+  static async openCsTicket() {
+    if (settings.csOpenTicketMode==1) {
+      aclick(csPage.acceptButton)
+    }
+    else if (settings.csOpenTicketMode==2) {
+      aclick(csPage.assignToMeButton)
+    }
+    else if (settings.csOpenTicketMode==3) {
+      return
+    }
+    else {throw new Error('Invalid setting for openCsTicket')}
+  }
+}
 
 //----------- global functions
 
