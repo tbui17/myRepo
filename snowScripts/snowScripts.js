@@ -12,6 +12,8 @@ const settings = {
   csOpenTicketMode:2 //1 = accept 2 = assigntome 3 = manual
 }
 
+//_____________PAGES__________
+
 class csPage {
   static acceptButton = () => new HTMLElement()
   static saveButton = () => {};
@@ -185,7 +187,7 @@ const oldSearchPage = {
   assetRows: () => {},
 };
 
-// =======================================================================================
+// ==========================SCRIPTS AND FUNCTIONS=============================================================
 
 class mainScripts{
   // main scripts
@@ -240,6 +242,7 @@ class mainScripts{
     await sleep (3000)
     await waitForExist(csPage.proposeSolutionsButton)
     await sleep(1000)
+    // @ts-ignore
     await csPage.proposeSolutionsButton().click()
   }
   
@@ -253,6 +256,7 @@ class mainScripts{
       let ticketNumber = oldIncPage.ticketNumber().value
       console.debug(`ticketNumber is ${ticketNumber}`)
       arrayTicketNumbers.push(ticketNumber)
+      // @ts-ignore
       await oldIncPage.printers2Template().click()
       await waitForExist(oldIncPage.alertWindow)
       await sleep(1000)
@@ -298,6 +302,7 @@ class mainScripts{
     await waitForExist(incidentPage.assignmentGroupField)
 
     ///validation
+    // @ts-ignore
     if (incidentPage.assignmentGroupField().value != 'Privacy') {
       throw new Error('Privacy is not the assigned group.')
     }
@@ -343,6 +348,7 @@ class scripts {
 
   static regexEmail(input) {
     const regexSubject = /(?<=Subject:).*/;
+    // @ts-ignore
     const subject = regexSubject.exec(input)[0];
     if (subject === null) {
       const arrayEmail = null
@@ -352,23 +358,22 @@ class scripts {
 
 
     const regexTo = /(?<=To: ).*/;
+    // @ts-ignore
     const to = regexTo.exec(input)[0];
     const regexAboveTo = /([\s\S]*)(?=To: )/;
+    // @ts-ignore
     const aboveTo = regexAboveTo.exec(input)[0];
     const aboveToLowercase = aboveTo.toLowerCase();
-    const aboveToLowercaseFiltered = aboveToLowercase.replaceAll(
-      savedStrings.deskEmail,
-      ""
-    );
+    // @ts-ignore
+    const aboveToLowercaseFiltered = aboveToLowercase.replaceAll(savedStrings.deskEmail,"");
     
 
     const regexAboveSubject = /([\s\S]*)(?=Subject: )/;
+    // @ts-ignore
     const aboveSubject = regexAboveSubject.exec(input)[0];
     const aboveSubjectLowercase = aboveSubject.toLowerCase();
-    const aboveSubjectLowercaseFiltered = aboveSubjectLowercase.replaceAll(
-      savedStrings.deskEmail,
-      ""
-    );
+    // @ts-ignore
+    const aboveSubjectLowercaseFiltered = aboveSubjectLowercase.replaceAll(savedStrings.deskEmail,"");
 
     const regexSenderAndCC = /[a-zA-Z0-9_.]+@[a-zA-Z0-9_.]+/g;
     const senderArray = aboveToLowercaseFiltered.match(regexSenderAndCC)
@@ -391,6 +396,7 @@ class scripts {
     await aclick(csPage.moreActionsButton)
     await sleep(200)
     await waitForExist(csPage.createIncidentButton);
+    // @ts-ignore
     await csPage.createIncidentButton().click();
     await sleep(10000)
     await waitForExist(incidentPage.templateButton);
@@ -526,29 +532,29 @@ class scripts {
     return currentDateTime;
   }
 
-  static getAssetTagsOldSearchPage() {
-    //broken
-    const arrayOfRowsWithPersonalComputer = oldSearchPage.assetRows();
-    try {
-      const arrayOfAssetTagValues = [];
-      for (const rowWithPersonalComputer of arrayOfRowsWithPersonalComputer) {
-        console.debug("(getAssetTags) Getting row:", rowWithPersonalComputer);
-        const cellWithAssetTag =
-          rowWithPersonalComputer.querySelector("td:nth-of-type(3)");
-        // const cellWithAssetTag = rowWithPersonalComputer.querySelector('input')
-        const assetTagValue = cellWithAssetTag.value;
-        arrayOfAssetTagValues.push(assetTagValue);
-      }
-      const stringOfAssetTagValues = `${arrayOfAssetTagValues}`;
-      return stringOfAssetTagValues;
-    } catch (error) {
-      console.debug("(getAssetTags)error: ", error);
-      console.debug(
-        "(getAssetTags) No element containing the asset tag was found."
-      );
-      return "n/a";
-    }
-  }
+  // static getAssetTagsOldSearchPage() {
+  //   //broken
+  //   const arrayOfRowsWithPersonalComputer = oldSearchPage.assetRows();
+  //   try {
+  //     const arrayOfAssetTagValues = [];
+  //     for (const rowWithPersonalComputer of arrayOfRowsWithPersonalComputer) {
+  //       console.debug("(getAssetTags) Getting row:", rowWithPersonalComputer);
+  //       const cellWithAssetTag =
+  //         rowWithPersonalComputer.querySelector("td:nth-of-type(3)");
+  //       // const cellWithAssetTag = rowWithPersonalComputer.querySelector('input')
+  //       const assetTagValue = cellWithAssetTag.value;
+  //       arrayOfAssetTagValues.push(assetTagValue);
+  //     }
+  //     const stringOfAssetTagValues = `${arrayOfAssetTagValues}`;
+  //     return stringOfAssetTagValues;
+  //   } catch (error) {
+  //     console.debug("(getAssetTags)error: ", error);
+  //     console.debug(
+  //       "(getAssetTags) No element containing the asset tag was found."
+  //     );
+  //     return "n/a";
+  //   }
+  // }
 
   static async locateClickUser() {
     // locate entry for user on old search page and click button to navigate to profile. Must have email address already in search bar.
@@ -560,50 +566,50 @@ class scripts {
     // await buttonOnPage().click();
   }
 
-  static async oldSearchGetInfo() {
-    // get all fields in search information and append them to the list
-    const arrayOldSearchPageValues = Object.entries(oldSearchPage);
+  // static async oldSearchGetInfo() {//! Broken
+  //   // get all fields in search information and append them to the list
+  //   const arrayOldSearchPageValues = Object.entries(oldSearchPage);
 
-    console.debug("(oldSearchGetInfo) Beginning waitForExist loop");
-    for (const [key, value] of arrayOldSearchPageValues) {
-      if (key === "assetRows") {
-        console.debug(
-          `(oldSearchGetInfo) Skipping over ${key} as specified in oldSearchGetInfo`
-        );
-        break;
-      }
-      await console.debug(`(oldSearchGetInfo) Checking if exists: ${key}`);
-      await waitForExist(value);
-    }
+  //   console.debug("(oldSearchGetInfo) Beginning waitForExist loop");
+  //   for (const [key, value] of arrayOldSearchPageValues) {
+  //     if (key === "assetRows") {
+  //       console.debug(
+  //         `(oldSearchGetInfo) Skipping over ${key} as specified in oldSearchGetInfo`
+  //       );
+  //       break;
+  //     }
+  //     await console.debug(`(oldSearchGetInfo) Checking if exists: ${key}`);
+  //     await waitForExist(value);
+  //   }
 
-    console.debug("(oldSearchGetInfo) All field elements exist.");
-    console.debug("(oldSearchGetInfo) Now appending element values to array");
+  //   console.debug("(oldSearchGetInfo) All field elements exist.");
+  //   console.debug("(oldSearchGetInfo) Now appending element values to array");
 
-    const arrayFieldValues = {};
+  //   const arrayFieldValues = {};
 
-    console.debug("(oldSearchGetInfo) Beginning append to list loop");
-    for (const [key, value] of arrayOldSearchPageValues) {
-      if (key === "assetRows") {
-        console.debug(
-          `(oldSearchGetInfo) Not appending and will skip over ${key} as specified in oldSearchGetInfo`
-        );
-        break;
-      }
-      console.debug(
-        `(oldSearchGetInfo) Pushing into arrayFieldValues array: "${key}" element whose value is`,
-        value().value
-      );
-      // arrayFieldValues.push(value().value)
-      arrayFieldValues[`${key}`] = value().value;
-    }
-    // appending asset tags to list
-    let assetTags = scripts.getAssetTagsOldSearchPage();
-    arrayFieldValues["Asset Tag"] = assetTags;
-    console.debug(
-      `(oldSearchGetInfo) For the key: "Asset Tag", the value ${assetTags} was pushed.`
-    );
-    return arrayFieldValues;
-  }
+  //   console.debug("(oldSearchGetInfo) Beginning append to list loop");
+  //   for (const [key, value] of arrayOldSearchPageValues) {
+  //     if (key === "assetRows") {
+  //       console.debug(
+  //         `(oldSearchGetInfo) Not appending and will skip over ${key} as specified in oldSearchGetInfo`
+  //       );
+  //       break;
+  //     }
+  //     console.debug(
+  //       `(oldSearchGetInfo) Pushing into arrayFieldValues array: "${key}" element whose value is`,
+  //       value().value
+  //     );
+  //     // arrayFieldValues.push(value().value)
+  //     arrayFieldValues[`${key}`] = value().value;
+  //   }
+  //   // appending asset tags to list
+  //   let assetTags = scripts.getAssetTagsOldSearchPage();
+  //   arrayFieldValues["Asset Tag"] = assetTags;
+  //   console.debug(
+  //     `(oldSearchGetInfo) For the key: "Asset Tag", the value ${assetTags} was pushed.`
+  //   );
+  //   return arrayFieldValues;
+  // }
 
   static convertToHtml(string) {
     const res = string.replaceAll("\n", "<br>");
@@ -635,11 +641,11 @@ class scripts {
     await waitForExist()
   }
 
-  static async jsonGetInfo() {
-    const output = await scripts.oldSearchGetInfo();
-    const outputInJson = JSON.stringify(output, null, 4);
-    console.debug(outputInJson);
-  }
+  // static async jsonGetInfo() {
+  //   const output = await scripts.oldSearchGetInfo();
+  //   const outputInJson = JSON.stringify(output, null, 4);
+  //   console.debug(outputInJson);
+  // }
 
   static async callerValidation(page) {
     await waitForExist(page.callerField)
@@ -665,20 +671,6 @@ class scripts {
 }
 
 //----------- global functions
-
-function* descend(el, sel, parent) {
-  if (el.matches(sel)) {
-    yield parent ? el.parentElement : el;
-  }
-  if (el.shadowRoot) {
-    for (const child of el.shadowRoot.children) {
-      yield* descend(child, sel, parent);
-    }
-  }
-  for (const child of el.children) {
-    yield* descend(child, sel, parent);
-  }
-}
 
 function elementValidation(page) {
   let entries = Object.entries(page);
@@ -937,8 +929,15 @@ function cdebug(message){
 
 async function tabSelect(tabIndex){
   let tabBar = await incidentPage.tabBar()
+  // @ts-ignore confirmed works
   let tab = await tabBar.querySelector(`sn-workspace-tab:nth-child(${tabIndex})`).shadowRoot.querySelector('a')
   await tab.click()
   await sleep(1000)
   cdebug(`Clicked tab of index ${tabIndex}`)
+}
+
+function fireEvent(selector, eventString){
+  selector().dispatchEvent(
+    new Event(eventString)
+  )
 }
