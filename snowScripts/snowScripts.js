@@ -399,7 +399,7 @@ class scripts {
     // @ts-ignore
     await csPage.createIncidentButton().click();
     await sleep(10000)
-    await waitForExist(incidentPage.templateButton);
+    await waitForExist(incidentPage.createSecurityIncidentButton);
   }
 
   static async activateTemplate(page, searchTerm) {
@@ -623,7 +623,7 @@ class scripts {
   static async acceptCsPage () {
     await csPage.acceptButton().click();
     await sleep(6000)
-    await waitForExist(csPage.proposeSolutionsButton);
+    await waitForExist(csPage.proposeSolutionsButton);0
   }
 
   
@@ -768,16 +768,18 @@ async function setExecFieldValue(selector, value) {
   await selector().dispatchEvent(input1)
   await sleep (1000)
   await selector().dispatchEvent(blur1)
+  await sleep(1000)
   if (selector().value != value) {
     console.log('(setFieldValue) Field did not change. Is the content in an iframe?')
   }
 }
 
-async function setEmailFieldValue(selector, value, parentDocumentSelector) {
+async function setEmailFieldValue(selector, value) {
   console.debug("(emailsetFieldValue fieldElement and value are)", selector, value);
   let focus1 = new Event('focus')
   let blur1 = new Event('blur')
   let paste1 = new Event('paste')
+  let input1 = new Event('input')
 
   //trigger adding event listeners
   await selector().dispatchEvent(focus1)
@@ -790,8 +792,10 @@ async function setEmailFieldValue(selector, value, parentDocumentSelector) {
   // parentDocumentSelector().execCommand("insertText", false, value);
   selector().value=value
   await selector().dispatchEvent(paste1)
+  await selector().dispatchEvent(input1)
   await sleep (1000)
   await selector().dispatchEvent(blur1)
+  await sleep(1000)
   if (selector().value != value) {
     console.log('Field did not change. Did you choose the right parent document?')
   }
@@ -823,7 +827,7 @@ function retry(fn, delay = 200, retries = 5, err = null) {
     console.groupCollapsed(`(Retry Function) Failed. Tries remaining: ${retries}`);
     if (delay !== 0) {
       if (retries === 1) {
-        delay += 2000;
+        delay += 30000;
         console.debug(
           "(Retry Function)Last retry, sleeping for 5000 ms longer than initial delay"
         );
