@@ -774,7 +774,7 @@ async function setExecFieldValue(selector, value) {
   }
 }
 
-async function setEmailFieldValue(selector, value) {
+async function setEmailFieldValue(selector, value, parentDocumentSelector=window[0]) {
   console.debug("(emailsetFieldValue fieldElement and value are)", selector, value);
   let focus1 = new Event('focus')
   let blur1 = new Event('blur')
