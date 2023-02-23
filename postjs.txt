@@ -1,8 +1,30 @@
-const requestOptions = {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ 
-    name: 'John Doe', 
-    email: 'johndoe@example.com' 
-  })
-};
+baseurl = ''
+apiurl = '/api/now/table/incident/'
+sys_idurl = ''
+
+
+// url='https://dev40853.service-now.com/api/now/table/incident/dffab65d47812110c78e5e52e36d43a1'
+url = baseurl+apiurl+sys_idurl
+requestBody = {
+    short_description: '12345'
+}
+
+
+headers = new Headers()
+headers.append('Content-Type','application/json')
+headers.append('Accept','application/json')
+headers.append('X-UserToken',g_ck)
+
+options1 = {
+  method: 'PATCH',
+  headers: headers,
+  body: JSON.stringify(requestBody)
+}
+// fetch(url, {
+//   method: 'PATCH',
+//   headers: headers,
+//   body: JSON.stringify(requestBody)
+// })
+resp1 = await fetch(url,options1)
+resp2 = await resp1.json()
+resp3 = a2.result
