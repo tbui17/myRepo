@@ -1,24 +1,37 @@
+baseurl = 'https://dev40853.service-now.com'
+table_name = 'cmdb_ci'
+
+apiurl = '/api/now/table/'+table_name
+
+
+
+
+
+param = new URLSearchParams()
+param.append('sysparm_limit', '1')
+url = baseurl+apiurl+'?'+param
+
+
 headers = new Headers()
 headers.append('Content-Type','application/json')
 headers.append('Accept','application/json')
 headers.append('X-UserToken',g_ck)
-url = `https://dev40853.service-now.com/api/sn_sc/servicecatalog/items/148bf45447512110c78e5e52e36d43ec/order_now`
-
-varstring = {
-    varname1: 'true',
-    varname2:'adf',
-    varname3:'abd'
-}
-
-var requestBody = { 
-    sysparm_quantity : 1,
-    variables : varstring
-}
 
 options1 = {
-  method: 'POST',
+  method: 'GET',
   headers: headers,
-  body: JSON.stringify(requestBody)
+// fetch(url, {
+//   method: 'PATCH',
+//   headers: headers,
+//   body: JSON.stringify(requestBody)
+// })
 }
+resp1 = await fetch(url,options1)
+resp2 = await resp1.json()
+resp3 = resp2.result
+resp4 = resp3[0]
 
-resp = await fetch(url,options1)
+fieldsArray = Object.keys(resp4)
+fieldsAndValues = resp4
+
+console.log(fieldsAndValues)
