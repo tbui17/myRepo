@@ -37,10 +37,10 @@ def get_auth_and_cookies():
                 "g_ck not defined selected page for playwright cdp may not be snow page"
             )
     try:
-        cookies_dict["__CJ_g_startTime"]
+        cookies_dict[configs['cookie_variable']]
     except KeyError:
         print(
-            f"(pw get cookies) Key error __CJ_g_startTime not found. Client may not be connected to snow."
+            f"(pw get cookies) Key error {configs['cookie_variable']} not found. Client may not be connected to snow."
         )
 
     # results_dict = {}
