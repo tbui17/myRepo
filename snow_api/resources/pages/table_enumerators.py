@@ -138,6 +138,7 @@ class cs_enums(StrEnum):
     GROUP_LIST="group_list"
     IMPACT="impact"
     INCIDENT="incident"
+    INTERNAL_CONTACT="internal_contact"
     INTERNAL_USER="internal_user"
     KNOWLEDGE="knowledge"
     LOCATION="location"

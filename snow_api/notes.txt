@@ -1,0 +1,18 @@
+Configure:
+Base URL, filters, email API
+
+const unsortedObject = { c: 1, a: 2, b: 3 };
+
+// Step 1: Get the object's keys as an array
+const keysArray = Object.keys(unsortedObject);
+
+// Step 2: Sort the array of keys
+keysArray.sort();
+
+// Step 3: Create a new object with the sorted keys
+const sortedObject = {};
+for (const key of keysArray) {
+  sortedObject[key] = unsortedObject[key];
+}
+
+console.log(sortedObject); // Output: { a: 2, b: 3, c: 1 }
