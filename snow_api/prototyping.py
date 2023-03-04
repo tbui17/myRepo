@@ -4,17 +4,13 @@ import requests
 import re
 from resources.pages import task_fields as fi
 
+from resources.common_utils import get_configs
 
-##### can try this if get_cookies does not work. Uses settings in configs.json.
-# import json
-# f = open("resources/configs.json", "r")
-# config = json.load(f)
-# f.close()
-# headers_default = config["headers_snow"]
+configs = get_configs()
 
 dic1 = get_auth_and_cookies()
-headers_default = dic1['headers']
-cookies_default = dic1['cookies']
+headers_default = configs['headers']
+cookies_default = configs['cookies']
 tableName = "incident"
 tableName3 = "m2m_kb_task"
 test_work_note = """

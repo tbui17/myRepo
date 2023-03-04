@@ -1,4 +1,5 @@
 import json
+from typing import Any
 from playwright.sync_api import sync_playwright
 from playwright import sync_api
 from .common_utils import get_configs
@@ -7,7 +8,7 @@ from pathlib import Path
 configs = get_configs()
 
 
-def get_auth_and_cookies():
+def get_auth_and_cookies() -> Any:
     domain_name = configs["base_url"]
     options = []
     options.append("--profile-directory=Default")
@@ -59,3 +60,4 @@ def get_auth_and_cookies():
         json_data['cookies'] = cookies_dict
     with open(path, "w") as f:
         json.dump(json_data, f, indent=2)
+    return get_configs()

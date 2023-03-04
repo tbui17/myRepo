@@ -12,28 +12,30 @@
     "sysparm_input_display_value": "true"
   },
   "headers": {
-    "X-UserToken": "d66969f147152110c78e5e52e36d43f1c669a5f31cfa1f6a6d5c0cd036e955e90c8cfd23",
+    "X-UserToken": "95ffc8764795a110c78e5e52e36d43c78512859629e00906a215c5b576b4946c4bb6109d",
     "content-type": "application/json",
     "accepts": "application/json"
   },
   "cookies": {
     "glide_user_route": "glide.a55a37590d509a7795ad62d936f7537f",
-    "BIGipServerpool_dev40853": "3029227530.36158.0000",
     "_gcl_au": "1.1.514319077.1677642838",
-    "AMCVS_2A2A138653C66CB60A490D45%40AdobeOrg": "1",
     "_fbp": "fb.1.1677642838683.650731348",
     "AMCV_2A2A138653C66CB60A490D45%40AdobeOrg": "-330454231%7CMCIDTS%7C19418%7CMCMID%7C42021726383705778822232190879921567564%7CMCAAMLH-1678247638%7C9%7CMCAAMB-1678247638%7CRKhpRz8krg2tLO6pguXWp5olkAcUniQYPHaMWWgdJ3xzPWQmdj0y%7CMCOPTOUT-1677650038s%7CNONE%7CMCAID%7CNONE%7CvVersion%7C3.1.2",
-    "s_cc": "true",
     "AAMC_servicenow_0": "REGION%7C9",
     "s_lv": "1677642841226",
-    "JSESSIONID": "84F6C851320F65A8D0CE91AB68AA6CC7",
-    "glide_user_activity": "U0N2M18xOkF4QzZLdklpR21aNTQzMytxVXU2UHE3V21VbEVxUlpxZFQ5bEpvaWN0UVE9OmplRnF4S0l0NW5RNWZRejdaUzgzQUVoOWhhSFRWUytET1MvLzIzYXhSMnc9",
-    "glide_session_store": "966969F147152110C78E5E52E36D43F1",
-    "__CJ_g_startTime": "%221677663417626%22"
+    "BIGipServerpool_dev40853": "3029227530.36158.0000",
+    "__CJ_g_startTime": "%221677908262094%22",
+    "JSESSIONID": "039D95B4C7DF856FE5ABAA38B8664875",
+    "glide_user_activity": "U0N2M18xOldBQURTOUZhYzgrNUZuOE5JWVNFbTAvZFVuVWphRUhNSmVyK2ZkWGQ1YTQ9OmlPNDVXcHUzQVB0b0UwSTNPN1ZWdDVrVG01WDhZbUpmZnVYMUwyS2xtaDg9",
+    "glide_session_store": "55FFC8764795A110C78E5E52E36D43C7",
+    "__CJ_tabs2_section_incident": "%220%22"
   },
   "email_api": "/api/x_980299_a1/asdflow",
   "filters": [
     "junk@mail.com",
     "missingmail@mail.com"
-  ]
+  ],
+  "cookie_variable": "JSESSIONID",
+  "assigned_to_default": "Don Goodliffe",
+  "assignment_group_default": "Hardware"
 }

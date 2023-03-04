@@ -1,27 +1,21 @@
 import json
 from pathlib import Path
 import re
+from re import Pattern
+from typing import LiteralString, Any
 
-def get_configs():
-    file = Path(__file__).parent / "configs.json"
+def get_configs()-> Any:
+    file: Path = Path(__file__).parent / "configs.json"
     with open(file, 'r') as f:
-        configs = json.load(f)
+        configs: Any = json.load(f)
         return configs
 
-def config_cookie_and_header():
-    config1 = get_configs()
-    config2 = {
-        'headers': config1['headers'],
-        'cookies': config1['cookies']
-    }
-    return config2
-
-def regex_email(data:str):
-    configs = get_configs()
+def regex_email(data:str) -> tuple[str, LiteralString] | None:
+    configs: dict = get_configs()
     filters:list = configs['filters']
     for filter in filters:
         data.replace(filter, "")
-    regexsyntax = re.compile(
+    regexsyntax: Pattern[str] = re.compile(
         r"""
         [a-zA-Z0-9_.]+ #username
         @ #@ symbol
@@ -29,8 +23,12 @@ def regex_email(data:str):
         """,
         re.VERBOSE,
     )
-    regexresults = regexsyntax.findall(data)
-    CCList = ",".join(regexresults)
-    Sender = regexresults[0]
-    return (Sender, CCList)
+    regexresults: list = regexsyntax.findall(data)
+    if regexresults:
+        CCList: LiteralString = ",".join(regexresults)
+        Sender: str = regexresults[0]
+        return (Sender, CCList)
+    else:
+        return None
+
 
