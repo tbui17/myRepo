@@ -1,7 +1,0 @@
-DataApi
-configs
-database
-file_utilities
-resources
-small_scripts
-tests
