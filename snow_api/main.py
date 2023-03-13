@@ -1,19 +1,27 @@
-from resources.request_setup import TableApiWorker
-from resources.playwright_get_cookies import get_auth_and_cookies
-from small_scripts import general
-from resources.pages.table_enumerators import (
-    TableEnums as tbl,
-    state_enums as st,
-    task_enums as ta,
-    cs_enums as ce,
-    resolution_code_enums as rc,
+from playwright.sync_api import APIRequestContext
+from resources.workers import TaskWorker
+from resources.workers import CsWorker
+from resources.playwright_functions import get_pw_request_api
+from resources.table_enumerators import (
+    TableEnums as tbe,
+    StateEnums as st,
+    TaskEnums as ta,
+    CsEnums as cse,
+    ResolutionCodeEnums as rc,
 )
+from worker_driver import WorkerDriver
+
 
 
 def main():
-    get_auth_and_cookies()
-    general.one_step(number='CS0001013',message='Ensure that your internet connection is stable.', state=st.RESOLVED, kb="KB0000014")
-    
+    ...
+    # pwsession: APIRequestContext = get_pw_request_api()
+    # wd: WorkerDriver = WorkerDriver(session=pwsession)
+    # print(wd.sysuser.get_user_by_email('admin@example.com'))
+    # worker: TaskApiWorker = TaskApiWorker()
+    # worker.get_by_number('CS0001013')
+    # general.one_step(number='CS0001013',message='Ensure that your internet connection is stable.', state=st.RESOLVED, kb="KB0000014")
+
 
 if __name__ == "__main__":
     main()

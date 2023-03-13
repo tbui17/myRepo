@@ -7,11 +7,9 @@ python_file_name = "dev_cs_fields2.py"
 
 os.chdir(page_dir_path)
 
-json_file = open(source_file_name)
-json_contents = json.load(json_file)
-json_file.close()
-
-with open(python_file_name, 'w') as f:
+with open(source_file_name) as json_file:
+    json_contents = json.load(json_file)
+with open(python_file_name, "w") as f:
     for word in json_contents:
         print(word)
         f.write(f"{word}: str | None\n")
